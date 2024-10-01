@@ -1,20 +1,12 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Found X ",
-  description: "Found your items here",
+  name: "SRS RecipeX",
+  description: "SRS RecipeX",
   navItems: [
-    {
-      label: "Home",
-      href: "/",
-    },
     {
       label: "About",
       href: "/about",
-    },
-    {
-      label: "Found Items",
-      href: "/found-items",
     },
     {
       label: "Login",
@@ -27,16 +19,8 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Home",
-      href: "/",
-    },
-    {
       label: "About",
       href: "/about",
-    },
-    {
-      label: "Found Items",
-      href: "/found-items",
     },
     {
       label: "Login",

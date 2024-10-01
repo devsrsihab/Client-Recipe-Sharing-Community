@@ -19,7 +19,8 @@ const RegisterForm = () => {
       profilePhoto:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
     };
-    handleUserRegistration(userData);
+    console.log(userData);
+    // handleUserRegistration(userData);
   };
 
   return (
@@ -32,7 +33,7 @@ const RegisterForm = () => {
               href="#"
               className="flex items-center mb-6 text-2xl font-semibold text-orange-400"
             >
-              Foundx
+              SRS RecipeX
             </a>
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-6">
               Sign Up to your account
@@ -41,18 +42,25 @@ const RegisterForm = () => {
               onSubmit={handleSubmit}
               resolver={zodResolver(registerValidationSchema)}
               defaultValues={{
-                name: "sohan",
                 mobileNumber: "01720196645",
                 email: "sohan@gmail.com",
                 password: "123456789",
               }}
             >
-              <FXInput
+              <div className="flex">
+                <FXInput
                 variant="underlined"
-                name="name"
-                label="Name"
+                name="name.firstName"
+                label="First Name"
                 type="text"
               />
+              <FXInput
+                variant="underlined"
+                name="name.lastName"
+                label="Last Name"
+                type="text"
+              />
+              </div>
               <FXInput
                 variant="underlined"
                 name="mobileNumber"

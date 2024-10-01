@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 const registerValidationSchema = z.object({
-  name: z.string().trim(),
+  name: z.object({
+    firstName: z.string().trim(),
+    lastName: z.string().trim(),
+  }),
   mobileNumber: z
     .string()
     .trim()
