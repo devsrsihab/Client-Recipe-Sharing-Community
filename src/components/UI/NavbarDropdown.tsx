@@ -35,8 +35,11 @@ const NavbarDropdown = () => {
         <Avatar className="cursor-pointer" name="Sohan" />
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions">
-        <DropdownItem onClick={() => handleNavigation("/profile")}>
-          Profile
+        <DropdownItem onClick={() => handleNavigation("/admin/dashboard")}>
+          Admin Dashboard
+        </DropdownItem>
+        <DropdownItem onClick={() => handleNavigation("/user/dashboard")}>
+          User Dashboard
         </DropdownItem>
         <DropdownItem
           onClick={() => handleNavigation("/profile/claim-requests")}
