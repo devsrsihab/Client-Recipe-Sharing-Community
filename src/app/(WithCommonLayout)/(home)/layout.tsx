@@ -1,14 +1,14 @@
 const Layout = ({
   // children,
-  recentPosts,
+  recipes,
 }: {
   // children: React.ReactNode;
-  recentPosts: React.ReactNode;
+  recipes: React.ReactNode;
 }) => {
   return (
     <>
       {/* {children}  */}
-      {recentPosts}
+      {recipes}
     </>
   );
 };

@@ -5,13 +5,22 @@ export const siteConfig = {
   description: "SRS RecipeX",
   navItems: [
     {
-      label: "About",
-      href: "/about",
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "My Profile",
+      href: "/myprofile",
     },
     {
       label: "Contact",
       href: "/contact",
     },
+    {
+      label: "About",
+      href: "/about",
+    },
+
     {
       label: "Login",
       href: "/auth/login",
@@ -25,13 +34,22 @@ export const siteConfig = {
 
   navMenuItems: [
     {
-      label: "About",
-      href: "/about",
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "My Profile",
+      href: "/myprofile",
     },
     {
       label: "Contact",
       href: "/contact",
     },
+    {
+      label: "About",
+      href: "/about",
+    },
+
     {
       label: "Login",
       href: "/auth/login",
