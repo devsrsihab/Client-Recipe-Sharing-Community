@@ -8,17 +8,17 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
   adminNavigation,
   userNavigation,
+  userTest,
 } from "@/src/components/modules/dashboard/menuConstant";
+import Link from "next/link";
 
 const avaterDropdownMenu = [
-  { name: "Your profile", href: "#" },
+  {
+    name: "Your profile",
+    href: userTest?.role === "admin" ? "/admin/profile" : "/user/profile",
+  },
   { name: "Sign out", href: "#" },
 ];
-
-const user = {
-  name: "Tom Cook",
-  role: "user",
-};
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +26,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <SidebarMenu
-        navigation={user?.role === "admin" ? adminNavigation : userNavigation}
+        navigation={
+          userTest?.role === "admin" ? adminNavigation : userNavigation
+        }
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
@@ -86,12 +88,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   {avaterDropdownMenu.map((item) => (
                     <MenuItem key={item.name}>
-                      <a
+                      <Link
                         href={item.href}
                         className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     </MenuItem>
                   ))}
                 </MenuItems>

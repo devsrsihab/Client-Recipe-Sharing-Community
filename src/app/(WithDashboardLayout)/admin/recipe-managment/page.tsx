@@ -1,6 +1,5 @@
-
 const RecipePage = () => {
-  return <div>RecipePage</div>;
+  return <div>Admin Recipe Page</div>;
 };
 
 export default RecipePage;

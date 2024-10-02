@@ -15,6 +15,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { IMenu } from "@/src/types/sidebarMenu.type";
+import { userTest } from "./menuConstant";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -30,10 +31,7 @@ const SidebarMenu = ({
   setSidebarOpen: (open: boolean) => void;
 }) => {
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
-  const user = {
-    name: "Tom Cook",
-    role: "user",
-  };
+
   // toggle dropdown
   const toggleDropdown = (name: string) => {
     setOpenDropdowns((prev) =>
@@ -50,7 +48,8 @@ const SidebarMenu = ({
     if (item.children) {
       return (
         <li key={item.name}>
-          <button
+          <Link
+            href={item.href}
             onClick={() => toggleDropdown(item.name)}
             className={classNames(
               item.current
@@ -70,7 +69,7 @@ const SidebarMenu = ({
               )}
               aria-hidden="true"
             />
-          </button>
+          </Link>
           <ul
             className={classNames(
               "mt-1 space-y-1 pl-4",
@@ -90,7 +89,7 @@ const SidebarMenu = ({
 
     return (
       <li key={item.name}>
-        <a
+        <Link
           href={item.href}
           className={classNames(
             item.current
@@ -103,7 +102,7 @@ const SidebarMenu = ({
             <item.icon aria-hidden="true" className="h-6 w-6 shrink-0 mr-2" />
           )}
           {item.name}
-        </a>
+        </Link>
       </li>
     );
   };
@@ -160,7 +159,7 @@ const SidebarMenu = ({
                     </ul>
                   </li>
 
-                  {user?.role === "admin" && (
+                  {userTest?.role === "admin" && (
                     <li className="mt-auto">
                       <a
                         href="#"
@@ -202,7 +201,7 @@ const SidebarMenu = ({
                 </ul>
               </li>
 
-              {user?.role === "admin" && (
+              {userTest?.role === "admin" && (
                 <li className="mt-auto">
                   <a
                     href="#"
