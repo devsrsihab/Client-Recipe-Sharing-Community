@@ -1,6 +1,7 @@
+import DashboardOverview from "@/src/components/modules/dashboard/DashboardOverview";
 
 const Dashboard = () => {
-  return <div>User Dashboard</div>;
+  return <DashboardOverview />;
 };
 
 export default Dashboard;

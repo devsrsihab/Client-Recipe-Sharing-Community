@@ -1,5 +1,4 @@
 import {
-  CalendarIcon,
   ChartPieIcon,
   FolderIcon,
   HomeIcon,
@@ -8,7 +7,7 @@ import {
 
 export const userTest = {
   name: "Tom Cook",
-  role: "admin",
+  role: "user",
 };
 
 // Admin Navigation
@@ -17,7 +16,7 @@ export const adminNavigation = [
     name: "Dashboard",
     href: "/admin/dashboard",
     icon: HomeIcon,
-    current: true,
+    current: false,
   },
   {
     name: "Recipe Management",

@@ -12,6 +12,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 import Link from "next/link";
 import { IMenu } from "@/src/types/sidebarMenu.type";
@@ -31,6 +32,7 @@ const SidebarMenu = ({
   setSidebarOpen: (open: boolean) => void;
 }) => {
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
+  const pathname = usePathname();
 
   // toggle dropdown
   const toggleDropdown = (name: string) => {
@@ -44,6 +46,9 @@ const SidebarMenu = ({
   // render navigation item
   const renderNavItem = (item: IMenu, depth = 0) => {
     const isOpen = openDropdowns.includes(item.name);
+    const isActive =
+      pathname === item.href ||
+      (item.children && item.children.some((child) => pathname === child.href));
 
     if (item.children) {
       return (
@@ -52,9 +57,9 @@ const SidebarMenu = ({
             href={item.href}
             onClick={() => toggleDropdown(item.name)}
             className={classNames(
-              item.current
+              isActive
                 ? "bg-gray-800 text-white"
-                : "text-gray-400 hover:bg-gray-800  hover:text-white",
+                : "text-gray-400 hover:bg-gray-800 hover:text-white",
               "group flex w-full items-center rounded-md p-2 text-sm font-semibold leading-6"
             )}
           >
@@ -92,7 +97,7 @@ const SidebarMenu = ({
         <Link
           href={item.href}
           className={classNames(
-            item.current
+            isActive
               ? "bg-gray-800 text-white"
               : "text-gray-400 hover:bg-gray-800 hover:text-white",
             "group flex items-center rounded-md p-2 text-sm font-semibold leading-6"
