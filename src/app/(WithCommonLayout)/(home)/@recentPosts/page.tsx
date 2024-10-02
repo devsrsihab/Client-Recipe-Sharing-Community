@@ -1,9 +1,9 @@
-import RecentPosts from "@/src/components/modules/home/RecentPosts";
+import Recipes from "@/src/components/modules/home/Recipes";
 
 const Page = () => {
   return (
     <>
-      <RecentPosts />
+      <Recipes />
     </>
   );
 };

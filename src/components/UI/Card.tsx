@@ -3,6 +3,7 @@ import { Button } from "@nextui-org/button";
 import { Image } from "@nextui-org/image";
 import { IPost } from "@/src/types";
 import { format } from 'date-fns';
+import Link from "next/link";
 
 const Card = ({ post }: { post: IPost }) => {
   const { title, category, images, city, dateFound, _id } = post || {};
@@ -13,7 +14,7 @@ const Card = ({ post }: { post: IPost }) => {
         <p className="absolute -top-0 right-1 rounded-full bg-black px-2 text-tiny uppercase text-white/90">
           {category?.name}
         </p>
-        <h4 className="mt-2 rounded bg-black/30 p-1 text-2xl font-medium text-white">
+        <h4 className="mt-2 rounded p-1 text-2xl font-medium dark:text-white text-black">
           {title}
         </h4>
       </CardHeader>
@@ -32,13 +33,10 @@ const Card = ({ post }: { post: IPost }) => {
           </p>
         </div>
 
-        <Button
-          className="bg-black text-tiny text-white"
-          radius="full"
-          size="sm"
-        >
-          Details
-        </Button>
+        <Link className="bg-black px-4 py-2  text-tiny text-white" href={`/recipes/${_id}`}>
+
+         Details
+        </Link>
       </CardFooter>
     </NextUiCard>
   );
