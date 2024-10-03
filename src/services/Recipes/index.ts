@@ -23,3 +23,14 @@ export const createRecipe = async (recipeData: Partial<IRecipe>) => {
     throw new Error("Failed to create recipe");
   }
 };
+
+// get recipe details
+export const getRecipeDetails = async (recipeId: string) => {
+  try {
+    const res = await axiosInstance.get(`/recipes/${recipeId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch recipe details:", error);
+    throw new Error("Failed to fetch recipe details");
+  }
+};

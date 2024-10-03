@@ -1,7 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
-import { createRecipe, getRecipes } from "../services/Recipes";
+import {
+  createRecipe,
+  getRecipeDetails,
+  getRecipes,
+} from "../services/Recipes";
 
 // create recipes
 export const useCreateRecipeMutation = () => {
@@ -18,5 +22,13 @@ export const useGetRecipes = () => {
   return useQuery({
     queryKey: ["GET_RECIPES"],
     queryFn: async () => await getRecipes(),
+  });
+};
+
+// get recipe details
+export const useGetRecipeDetails = (recipeId: string) => {
+  return useQuery({
+    queryKey: ["GET_RECIPE_DETAILS", recipeId],
+    queryFn: async () => await getRecipeDetails(recipeId),
   });
 };

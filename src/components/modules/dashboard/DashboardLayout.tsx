@@ -38,7 +38,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/*3. Main Content with Header */}
       <div className="lg:pl-72">
         {/* Header */}
-        <div className="dark:bg-[#111827] sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200  px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="dark:bg-[#111827] bg-white sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200  px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
