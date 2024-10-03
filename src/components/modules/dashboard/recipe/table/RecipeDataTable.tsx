@@ -18,6 +18,8 @@ import {
 } from "@nextui-org/table";
 import React, { useMemo, useState } from "react";
 import { renderCell } from "./TableColumn";
+import { Button } from "@nextui-org/button";
+import Link from "next/link";
 
 const RecipeDataTable = () => {
   const { data, isLoading } = useGetRecipes();
@@ -40,6 +42,14 @@ const RecipeDataTable = () => {
     <div className="relative">
       <Table
         aria-label="Recipe table with pagination"
+        // heading content
+        topContent={
+          <div className="flex justify-end">
+            <Button>
+              <Link href="/admin/recipe-managment/create">Add Recipe</Link>
+            </Button>
+          </div>
+        }
         bottomContent={
           recipes?.length > 0 ? (
             <div className="flex w-full justify-center">

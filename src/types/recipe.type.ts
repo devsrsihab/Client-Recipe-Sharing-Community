@@ -2,6 +2,7 @@ export interface IRecipe {
   comments: any[];
   _id: string;
   title: string;
+  image: string;
   description: string;
   ingredients: IIngredient[];
   instructions: string;
