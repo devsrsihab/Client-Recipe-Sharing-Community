@@ -1,5 +1,9 @@
+"use client";
+
+import RecipeDataTable from "@/src/components/modules/dashboard/recipe/table/RecipeDataTable";
+
 const RecipePage = () => {
-  return <div>Admin Recipe Page</div>;
+  return <RecipeDataTable />;
 };
 
 export default RecipePage;

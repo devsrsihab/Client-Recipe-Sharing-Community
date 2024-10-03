@@ -12,6 +12,7 @@ import {
 } from "@/src/components/modules/dashboard/menuConstant";
 import Link from "next/link";
 import { ThemeSwitch } from "../../theme-switch";
+import { logOutUser } from "@/src/services/AuthService";
 
 const avaterDropdownMenu = [
   {
@@ -89,16 +90,24 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                     transition
                     className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                   >
-                    {avaterDropdownMenu.map((item) => (
-                      <MenuItem key={item.name}>
-                        <Link
-                          href={item.href}
-                          className="block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
-                        >
-                          {item.name}
-                        </Link>
-                      </MenuItem>
-                    ))}
+                    <MenuItem key="/">
+                      <Link
+                        href="/"
+                        className="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                      >
+                        Profile
+                      </Link>
+                    </MenuItem>
+                    <MenuItem key="logout">
+                      <a
+                        onClick={() => {
+                          logOutUser();
+                        }}
+                        className="cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 data-[focus]:bg-gray-50"
+                      >
+                        Logout
+                      </a>
+                    </MenuItem>
                   </MenuItems>
                 </Menu>
               </div>

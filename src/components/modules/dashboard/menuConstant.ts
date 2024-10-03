@@ -7,7 +7,7 @@ import {
 
 export const userTest = {
   name: "Tom Cook",
-  role: "user",
+  role: "admin",
 };
 
 // Admin Navigation

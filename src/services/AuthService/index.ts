@@ -10,8 +10,8 @@ export const registerUser = async (userData: FieldValues) => {
     const { data } = await axiosInstance.post("/auth/register", userData);
 
     if (data?.success) {
-      cookies().set("accessToken", data?.data?.accessToken);
-      cookies().set("refreshToken", data?.data?.refreshToken);
+      cookies().set("srsRecipeAccessToken", data?.data?.accessToken);
+      cookies().set("srsRecipeRefreshToken", data?.data?.refreshToken);
     }
 
     return data;
@@ -25,8 +25,8 @@ export const loginUser = async (userData: FieldValues) => {
   try {
     const { data } = await axiosInstance.post("/auth/login", userData);
     if (data?.success) {
-      cookies().set("accessToken", data?.data?.accessToken);
-      cookies().set("refreshToken", data?.data?.refreshToken);
+      cookies().set("srsRecipeAccessToken", data?.data?.srsRecipeAccessToken);
+      cookies().set("srsRecipeRefreshToken", data?.data?.srsRecipeRefreshToken);
     }
     return data;
   } catch (error: any) {
@@ -36,13 +36,13 @@ export const loginUser = async (userData: FieldValues) => {
 
 // login out user service
 export const logOutUser = () => {
-  cookies().delete("accessToken");
-  cookies().delete("refreshToken");
+  cookies().delete("srsRecipeAccessToken");
+  cookies().delete("srsRecipeRefreshToken");
 };
 
 // get user service
 export const getCurrentuser = async () => {
-  const accessToken = cookies().get("accessToken")?.value;
+  const accessToken = cookies().get("srsRecipeAccessToken")?.value;
 
   let decodedToken = null;
   if (accessToken) {
@@ -52,31 +52,26 @@ export const getCurrentuser = async () => {
       name: decodedToken?.name,
       email: decodedToken?.email,
       role: decodedToken?.role,
-      mobileNumber: decodedToken?.mobileNumber,
-      profilePhoto: decodedToken?.profilePhoto,
       status: decodedToken?.status,
     };
   }
   return decodedToken;
 };
 
-
 // refresh token service
 export const getNewAccessToken = async () => {
-
-try {
-    const refreshToken = cookies().get("refreshToken")?.value;
-  const { data } = await axiosInstance({
-    method: "POST",
-    url: "/auth/refresh-token",
-    withCredentials: true,
-    headers: {
-      "cookie": `refreshToken=${refreshToken}`
-    }
-  })
-  return data;
+  try {
+    const refreshToken = cookies().get("srsRecipeRefreshToken")?.value;
+    const { data } = await axiosInstance({
+      method: "POST",
+      url: "/auth/refresh-token",
+      withCredentials: true,
+      headers: {
+        cookie: `srsRecipeRefreshToken=${refreshToken}`,
+      },
+    });
+    return data;
   } catch (error) {
     throw new Error("Failed to refresh token");
   }
 };
-

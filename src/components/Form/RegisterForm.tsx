@@ -9,20 +9,28 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 import registerValidationSchema from "@/src/schemas/register.schema";
 import { useUserRegistration } from "@/src/hooks/auth.hook";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
-  const { mutate: handleUserRegistration, isPending } = useUserRegistration();
+  const {
+    mutate: handleUserRegistration,
+    isPending,
+    isSuccess,
+  } = useUserRegistration();
+  const router = useRouter();
   // handle submit form
   const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
     const userData = {
       ...data,
-      profilePhoto:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+      name: { firstName: data.firstName, lastName: data.lastName },
     };
-    console.log(userData);
-    // handleUserRegistration(userData);
+    handleUserRegistration(userData);
   };
 
+  // if registration is successful, redirect to login page
+  if (isSuccess) {
+    router.push("/auth/login");
+  }
   return (
     <Container>
       <section className="bg-gray-50 dark:bg-gray-900 h-screen flex items-center">
@@ -41,6 +49,7 @@ const RegisterForm = () => {
             <FXForm
               onSubmit={handleSubmit}
               resolver={zodResolver(registerValidationSchema)}
+              isReset={isSuccess}
               defaultValues={{
                 mobileNumber: "01720196645",
                 email: "sohan@gmail.com",
@@ -49,24 +58,18 @@ const RegisterForm = () => {
             >
               <div className="flex">
                 <FXInput
-                variant="underlined"
-                name="name.firstName"
-                label="First Name"
-                type="text"
-              />
-              <FXInput
-                variant="underlined"
-                name="name.lastName"
-                label="Last Name"
-                type="text"
-              />
+                  variant="underlined"
+                  name="firstName"
+                  label="First Name"
+                  type="text"
+                />
+                <FXInput
+                  variant="underlined"
+                  name="lastName"
+                  label="Last Name"
+                  type="text"
+                />
               </div>
-              <FXInput
-                variant="underlined"
-                name="mobileNumber"
-                label="Mobile Number"
-                type="number"
-              />
               <FXInput
                 variant="underlined"
                 name="email"

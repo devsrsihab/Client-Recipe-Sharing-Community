@@ -59,10 +59,6 @@ export const Navbar = () => {
           <ThemeSwitch />
         </NavbarItem>
 
-        <NavbarItem className="hidden sm:flex">
-          <NavbarDropdown />
-        </NavbarItem>
-
         {!userLoading ? (
           user?.email ? (
             <NavbarItem className="hidden sm:flex">

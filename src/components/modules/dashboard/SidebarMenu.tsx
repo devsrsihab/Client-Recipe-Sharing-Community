@@ -59,7 +59,7 @@ const SidebarMenu = ({
             className={classNames(
               isActive
                 ? "bg-gray-800 text-white"
-                : "text-gray-400 hover:bg-gray-800 hover:text-white",
+                : "text-black dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800 hover:text-white",
               "group flex w-full items-center rounded-md p-2 text-sm font-semibold leading-6"
             )}
           >
@@ -99,7 +99,7 @@ const SidebarMenu = ({
           className={classNames(
             isActive
               ? "bg-gray-800 text-white"
-              : "text-gray-400 hover:bg-gray-800 hover:text-white",
+              : "text-black dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800 hover:text-white",
             "group flex items-center rounded-md p-2 text-sm font-semibold leading-6"
           )}
         >

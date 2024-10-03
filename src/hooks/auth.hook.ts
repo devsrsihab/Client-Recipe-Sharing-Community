@@ -10,7 +10,11 @@ export const useUserRegistration = () => {
     mutationFn: async (userData) => await registerUser(userData),
     onSuccess: () => toast.success("Register Successfully"),
     onError: (error) => {
-      toast.error(error.message.replace("AxiosError:", ""));
+      toast.error(
+        error.message.includes("Duplicate error")
+          ? "Email already exists"
+          : error.message
+      );
     },
   });
 };

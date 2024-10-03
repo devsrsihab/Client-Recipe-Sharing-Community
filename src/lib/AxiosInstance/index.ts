@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   function (config) {
     const cookieStore = cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
+    const accessToken = cookieStore.get("srsRecipeAccessToken")?.value;
 
     if (accessToken) {
       config.headers.Authorization = accessToken;
@@ -28,11 +28,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
 
-
   async function (error) {
-    const config = error.config; 
+    const config = error.config;
     if (error.response) {
-      const serverMessage = error.response.data?.message || "Something went wrong on the server.";
+      const serverMessage =
+        error.response.data?.message || "Something went wrong on the server.";
       return Promise.reject(new Error(serverMessage));
     }
 
@@ -40,22 +40,19 @@ axiosInstance.interceptors.response.use(
     if (error?.response?.status === 401 && !config?.sent) {
       // set the sent flag to true , so that this block of code is not executed again
       config.sent = true;
-      const res = await getNewAccessToken()
-      const accessToken = res?.data?.accessToken
+      const res = await getNewAccessToken();
+      const accessToken = res?.data?.srsRecipeAccessToken;
 
       // set the token in authorization header
-      config.headers['Authorization'] = accessToken
-      cookies().set("accessToken", accessToken)
+      config.headers["Authorization"] = accessToken;
+      cookies().set("srsRecipeAccessToken", accessToken);
 
       // retry the request
-      return axiosInstance(config)
-    }else{
-
+      return axiosInstance(config);
+    } else {
       return Promise.reject(error);
     }
-
   }
 );
-
 
 export default axiosInstance;
