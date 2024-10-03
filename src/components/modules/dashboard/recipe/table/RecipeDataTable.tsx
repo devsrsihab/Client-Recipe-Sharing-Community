@@ -4,9 +4,6 @@ import { useGetRecipes } from "@/src/hooks/recipe.hook";
 import { IRecipe } from "@/src/types/recipe.type";
 import { Pagination } from "@nextui-org/pagination";
 import { Spinner } from "@nextui-org/spinner";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { Tooltip } from "@nextui-org/tooltip";
-
 import {
   Table,
   TableBody,
@@ -24,10 +21,9 @@ import Link from "next/link";
 const RecipeDataTable = () => {
   const { data, isLoading } = useGetRecipes();
   const [page, setPage] = useState(1);
-  const [isChangingPage, setIsChangingPage] = useState(false);
 
   const recipes = data?.data;
-  const rowsPerPage = 4;
+  const rowsPerPage = 5;
 
   const pages = Math.ceil(recipes?.length / rowsPerPage);
 
@@ -37,6 +33,8 @@ const RecipeDataTable = () => {
 
     return recipes?.slice(start, end);
   }, [page, recipes]);
+
+  console.log(recipes);
 
   return (
     <div className="relative">
@@ -60,7 +58,6 @@ const RecipeDataTable = () => {
                 color="primary"
                 page={page}
                 total={pages}
-                isDisabled={isChangingPage}
                 onChange={(page) => setPage(page)}
               />
             </div>

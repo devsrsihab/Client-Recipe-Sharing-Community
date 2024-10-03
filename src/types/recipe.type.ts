@@ -6,7 +6,7 @@ export interface IRecipe {
   description: string;
   ingredients: IIngredient[];
   instructions: string;
-  category: string;
+  category: ICategory;
   prepTime: number;
   cookTime: number;
   upvotes: number;
@@ -18,6 +18,15 @@ export interface IRecipe {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+}
+export interface ICategory {
+  _id: string;
+  name: string;
+  recipeCount: number;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 export interface IIngredient {
