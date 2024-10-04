@@ -1,5 +1,6 @@
 "use client";
 
+import DeleteRecipeModal from "@/src/components/modal/DeleteRecipeModal";
 import { ICategory, IRecipe } from "@/src/types";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Image } from "@nextui-org/image";
@@ -37,14 +38,19 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
           >
             <EyeIcon className="size-5" />
           </Link>
+
           <Link
             href={`/admin/recipe-managment/edit/${recipe._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <PencilIcon className="size-5" />
           </Link>
+
           <span className="cursor-pointer text-lg text-danger active:opacity-50">
-            <TrashIcon className="size-5" />
+            <DeleteRecipeModal
+              buttonContent={<TrashIcon className="size-5" />}
+              recipeid={recipe?._id}
+            />
           </span>
         </div>
       );

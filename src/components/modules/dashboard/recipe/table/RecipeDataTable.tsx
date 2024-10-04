@@ -33,8 +33,6 @@ const RecipeDataTable = () => {
     return recipes?.slice(start, end);
   }, [page, recipes]);
 
-  console.log(recipes);
-
   return (
     <div className="relative">
       <Table

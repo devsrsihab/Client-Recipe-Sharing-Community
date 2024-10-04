@@ -48,3 +48,14 @@ export const updateRecipe = async (
     throw new Error("Failed to update recipe");
   }
 };
+
+// delete recipe
+export const deleteRecipe = async (recipeId: string) => {
+  try {
+    const res = await axiosInstance.delete(`/recipes/${recipeId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to delete recipe:", error);
+    throw new Error("Failed to delete recipe");
+  }
+};

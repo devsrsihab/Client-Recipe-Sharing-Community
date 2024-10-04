@@ -1,13 +1,13 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
 import {
   createRecipe,
+  deleteRecipe,
   getRecipeDetails,
   getRecipes,
   updateRecipe,
 } from "../services/Recipes";
-import { IRecipe } from "../types";
 
 // create recipes
 export const useCreateRecipeMutation = () => {
@@ -24,6 +24,7 @@ export const useGetRecipes = () => {
   return useQuery({
     queryKey: ["GET_RECIPES"],
     queryFn: async () => await getRecipes(),
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
   });
 };
 
@@ -41,6 +42,20 @@ export const useUpdateRecipeMutation = () => {
     mutationKey: ["UPDATE_RECIPE"],
     mutationFn: async ({ id, data }) => await updateRecipe(id, data),
     onSuccess: () => toast.success("Recipe Updated Successfully"),
+    onError: (error) => toast.error(error.message),
+  });
+};
+
+// delete recipe
+export const useDeleteRecipeMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation<any, Error, string>({
+    mutationKey: ["DELETE_RECIPE"],
+    mutationFn: async (recipeId) => await deleteRecipe(recipeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["GET_RECIPES"] });
+      toast.success("Recipe Deleted Successfully");
+    },
     onError: (error) => toast.error(error.message),
   });
 };
