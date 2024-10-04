@@ -2,9 +2,8 @@
 
 import DeleteRecipeModal from "@/src/components/modal/DeleteRecipeModal";
 import FXDropSelector from "@/src/components/UI/FXDropSelector";
-import { ICategory, IUser } from "@/src/types";
+import { IUser } from "@/src/types";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { Avatar } from "@nextui-org/avatar";
 import { Image } from "@nextui-org/image";
 import Link from "next/link";
 
@@ -51,7 +50,9 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
     case "name":
       return (
         <>
-          {user.name.firstName} {user.name.lastName}
+          <span className="capitalize">
+            {user.name.firstName} {user.name.lastName}
+          </span>
         </>
       );
     case "email":
@@ -84,14 +85,14 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
       return (
         <div className="relative flex items-center gap-4">
           <Link
-            href={`/admin/recipe-managment/view/${user._id}`}
+            href={`/admin/user-management/view/${user._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <EyeIcon className="size-5" />
           </Link>
 
           <Link
-            href={`/admin/recipe-managment/edit/${user._id}`}
+            href={`/admin/user-management/edit/${user._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <PencilIcon className="size-5" />

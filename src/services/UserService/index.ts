@@ -10,7 +10,7 @@
 
 import axiosInstance from "@/src/lib/AxiosInstance";
 
-// TODO: DONE DOMPLETED: get all users
+//  DONE DOMPLETED: get all users
 export const getAllUsers = async () => {
   const response = await axiosInstance.get("/users/admin-user");
   return response.data;

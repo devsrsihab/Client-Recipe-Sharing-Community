@@ -11,9 +11,7 @@ import {
 import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
 
-// global query client
-
-// TODO. get all users
+//  get all users
 export const useGetAllUsers = () => {
   return useQuery({
     queryKey: ["ALL_USERS"],
