@@ -15,9 +15,9 @@ import {
 import React, { useMemo, useState } from "react";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
-import { renderCell } from "./UserTableColumn";
+import { renderCell } from "./TableColumn";
 
-const UserDataTable = () => {
+const RecipeDataTable = () => {
   const { data, isLoading } = useGetRecipes();
   const [page, setPage] = useState(1);
 
@@ -63,10 +63,10 @@ const UserDataTable = () => {
       >
         <TableHeader>
           <TableColumn key="image">Image</TableColumn>
-          <TableColumn key="title">Name</TableColumn>
-          <TableColumn key="category">Email</TableColumn>
-          <TableColumn key="status">Status</TableColumn>
-          <TableColumn key="role">Role</TableColumn>
+          <TableColumn key="title">Title</TableColumn>
+          <TableColumn key="category">Category</TableColumn>
+          <TableColumn key="prepTime">Prep Time</TableColumn>
+          <TableColumn key="cookTime">Cook Time</TableColumn>
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody
@@ -88,4 +88,4 @@ const UserDataTable = () => {
   );
 };
 
-export default UserDataTable;
+export default RecipeDataTable;

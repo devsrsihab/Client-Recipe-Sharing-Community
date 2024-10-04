@@ -1,7 +1,6 @@
-import { Button } from "@nextui-org/button";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Key } from "@react-types/shared";
-import React, { useState } from "react";
+import React from "react";
 
 const FXDropSelector = ({
   menuItems,

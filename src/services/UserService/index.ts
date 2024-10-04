@@ -1,3 +1,5 @@
+"use server";
+
 // GET       /users/admin-user
 // GET      /users/admin-user/:id
 // DELETE  /users/admin-user/:id

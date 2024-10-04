@@ -1,9 +1,9 @@
 "use client";
 
-import RecipeDataTable from "@/src/components/modules/dashboard/recipe/table/UserDataTable";
+import UserDataTable from "@/src/components/modules/dashboard/user-management/table/UserDataTable";
 
 const AdminUserManagementPage = () => {
-  return <RecipeDataTable />;
+  return <UserDataTable />;
 };
 
 export default AdminUserManagementPage;

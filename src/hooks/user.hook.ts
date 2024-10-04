@@ -12,13 +12,12 @@ import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
 
 // global query client
-const queryClient = useQueryClient();
 
 // TODO. get all users
 export const useGetAllUsers = () => {
   return useQuery({
     queryKey: ["ALL_USERS"],
-    queryFn: getAllUsers,
+    queryFn: async () => await getAllUsers(),
     refetchOnWindowFocus: false, // Prevent refetching on window focus
   });
 };
@@ -27,12 +26,14 @@ export const useGetAllUsers = () => {
 export const useGetUserById = (id: string) => {
   return useQuery({
     queryKey: ["SINGLE_USER", id],
-    queryFn: () => getUserById(id),
+    queryFn: async () => await getUserById(id),
   });
 };
 
 // TODO. delete user by id
 export const useDeleteUserByIdMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<any, Error, string>({
     mutationKey: ["DELETE_USER_BY_ID"],
     mutationFn: async (id) => await deleteUserById(id),
@@ -46,6 +47,8 @@ export const useDeleteUserByIdMutation = () => {
 
 // TODO. change role
 export const useChangeRoleMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["CHANGE_ROLE"],
     mutationFn: async ({ id, data }) => await changeRole(id, data),
@@ -59,6 +62,8 @@ export const useChangeRoleMutation = () => {
 
 // TODO. change status
 export const useChangeStatusMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["CHANGE_STATUS"],
     mutationFn: async ({ id, data }) => await changeStatus(id, data),
@@ -72,6 +77,8 @@ export const useChangeStatusMutation = () => {
 
 // TODO. create user
 export const useCreateUserMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["CREATE_USER"],
     mutationFn: async (postData) => await createUser(postData),
@@ -85,6 +92,8 @@ export const useCreateUserMutation = () => {
 
 // TODO. update user by id
 export const useUpdateUserByIdMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["UPDATE_USER_BY_ID"],
     mutationFn: async ({ id, data }) => await updateUserById(id, data),

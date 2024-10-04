@@ -11,13 +11,14 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  getKeyValue,
 } from "@nextui-org/table";
 import React, { useMemo, useState } from "react";
-import { renderCell } from "./TableColumn";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
+import { renderCell } from "../../recipe/table/TableColumn";
 
-const RecipeDataTable = () => {
+const UserDataTable = () => {
   const { data, isLoading } = useGetRecipes();
   const [page, setPage] = useState(1);
 
@@ -78,7 +79,7 @@ const RecipeDataTable = () => {
           {(recipe: IRecipe) => (
             <TableRow key={recipe._id}>
               {(columnKey) => (
-                <TableCell>{renderCell(recipe, columnKey) as any}</TableCell>
+                <TableCell>{getKeyValue(recipe, columnKey) as any}</TableCell>
               )}
             </TableRow>
           )}
@@ -88,4 +89,4 @@ const RecipeDataTable = () => {
   );
 };
 
-export default RecipeDataTable;
+export default UserDataTable;

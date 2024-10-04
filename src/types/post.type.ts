@@ -35,12 +35,15 @@ export interface ICategory {
 
 export interface IUser {
   _id: string;
-  name: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
   role: string;
   email: string;
   status?: string;
   mobileNumber: string;
-  profilePhoto?: string;
+  profilePicture?: string;
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
