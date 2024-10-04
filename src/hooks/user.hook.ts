@@ -19,6 +19,7 @@ export const useGetAllUsers = () => {
   return useQuery({
     queryKey: ["ALL_USERS"],
     queryFn: getAllUsers,
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
   });
 };
 
