@@ -6,11 +6,14 @@ import FXSelect from "@/src/components/Form/FXSelect";
 import FXTextArea from "@/src/components/Form/FXTextArea";
 import { useUser } from "@/src/context/user.provider";
 import { useGetCategories } from "@/src/hooks/categories.hook";
-import { useCreateRecipeMutation } from "@/src/hooks/recipe.hook";
-import { createRecipeSchema } from "@/src/schemas/recipe.schem";
+import {
+  useCreateRecipeMutation,
+  useGetRecipeDetails,
+  useUpdateRecipeMutation,
+} from "@/src/hooks/recipe.hook";
+import { updateRecipeSchema } from "@/src/schemas/recipe.schem";
 import { IRecipe } from "@/src/types";
 import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
@@ -23,15 +26,25 @@ import {
   useForm,
 } from "react-hook-form";
 
-const CreateRecipePage = () => {
+const RecipeUpdate = ({ params }: { params: { updateRecipe: string } }) => {
+  const { updateRecipe } = params;
+
   // define state
   const [imageFile, setImageFile] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
   const {
-    mutate: createRecipe,
+    data: recipeSingleData,
+    isLoading: isSingleRecipeLoading,
+    isError: isSingleRecipeError,
+  } = useGetRecipeDetails(updateRecipe as string);
+
+  const reciepeSingle = recipeSingleData?.data;
+
+  const {
+    mutate: handleUpdateRecipe,
     isPending: recipePending,
-    isSuccess,
-  } = useCreateRecipeMutation();
+    isSuccess: isCreateRecipeSuccess,
+  } = useUpdateRecipeMutation();
   // get categories
   const { data: categoriesData, isLoading: categoryLoading } =
     useGetCategories();
@@ -50,14 +63,15 @@ const CreateRecipePage = () => {
   }
 
   // define methods
+  const formConfig: any = {};
+  formConfig["resolver"] = zodResolver(updateRecipeSchema);
+
   const methods = useForm({
-    resolver: zodResolver(createRecipeSchema),
-    defaultValues: {
-      ingredients: [{ name: "", quantity: "" }],
-    },
+    ...formConfig,
   });
 
-  const { control, handleSubmit, reset } = methods;
+  // destructure methods needed object
+  const { control, handleSubmit } = methods;
 
   // init usefieldarray obj
   const { fields, append, remove } = useFieldArray({
@@ -65,38 +79,21 @@ const CreateRecipePage = () => {
     name: "ingredients",
   });
 
-  // if the data suucessfully submit then reset the form
-  useEffect(() => {
-    if (isSuccess) {
-      reset({
-        ingredients: [{ name: "", quantity: "" }],
-      });
-      setImageFile([]);
-      setImagePreview([]);
-    }
-  }, [isSuccess, reset]);
-
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    const imageUrl = await cloudinaryUpload(imageFile[0]);
+    let imageUrl = recipeSingleData?.data?.image;
+    if (imageFile && imageFile.length > 0) {
+      imageUrl = await cloudinaryUpload(imageFile[0]);
+    }
     const recipeData: Partial<IRecipe> = {
       ...data,
-      title: data.title,
       prepTime: Number(data.prepTime),
       cookTime: Number(data.cookTime),
-      category: data.category,
-      description: data.description,
-      ingredients: data.ingredients.map(
-        (question: { name: string; quantity: string }) => ({
-          name: question.name,
-          quantity: question.quantity,
-        })
-      ),
       image: imageUrl || "",
     };
 
-    createRecipe(recipeData);
-    console.log(recipeData);
+    // Replace createRecipe with updateRecipe (you'll need to create this mutation)
+    handleUpdateRecipe({ id: updateRecipe, data: recipeData });
   };
 
   // handle field array append
@@ -119,21 +116,58 @@ const CreateRecipePage = () => {
     }
   };
 
+  useEffect(() => {
+    if (recipeSingleData?.data) {
+      const recipe = recipeSingleData.data;
+      methods.setValue("title", recipe.title);
+      methods.setValue("category", recipe?.category?._id || "");
+      methods.setValue("prepTime", recipe.prepTime);
+      methods.setValue("cookTime", recipe.cookTime);
+      methods.setValue("instructions", recipe.instructions);
+      methods.setValue("description", recipe.description);
+      methods.setValue("ingredients", recipe.ingredients);
+      setImagePreview(recipe.image ? [recipe.image] : []);
+    }
+  }, [recipeSingleData, methods]);
+
+  // loading state
+  if (isSingleRecipeLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen dark:bg-gray-800">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+      </div>
+    );
+  }
+
+  // is erro r
+  if (isSingleRecipeError) {
+    return (
+      <div className="text-center text-red-600 dark:text-red-400 text-xl mt-10">
+        Error loading recipe.
+      </div>
+    );
+  }
+
   return (
     <div className="h-full rounded-xl bg-gradient-to-b from-default-100 px-20 py-12">
-      <h1 className="text-2xl font-semibold">Post a found item</h1>
+      <h1 className="text-2xl font-semibold">Update Recipe</h1>
       <Divider className="my-5" />
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* title and description */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              <FXInput name="title" label="Title" />
+              <FXInput
+                defaultValue={reciepeSingle?.title}
+                name="title"
+                label="Title"
+              />
             </div>
             <div className="min-w-fit flex-1">
               <FXSelect
                 options={categorieOptions}
                 disabled={categoryLoading}
+                defaultValue={reciepeSingle?.category?._id || ""}
                 name="category"
                 label="Category"
                 variant="bordered"
@@ -144,20 +178,36 @@ const CreateRecipePage = () => {
           {/* prepTime and cookTime */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              <FXInput name="prepTime" type="number" label="Prep Time" />
+              <FXInput
+                defaultValue={reciepeSingle?.prepTime}
+                name="prepTime"
+                label="Prep Time"
+              />
             </div>
             <div className="min-w-fit flex-1">
-              <FXInput name="cookTime" type="number" label="Cook Time" />
+              <FXInput
+                defaultValue={reciepeSingle?.cookTime}
+                name="cookTime"
+                label="Cook Time"
+              />
             </div>
           </div>
 
           {/* instructions and description */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              <FXTextArea name="instructions" label="Instructions" />
+              <FXTextArea
+                defaultValue={reciepeSingle?.instructions}
+                name="instructions"
+                label="Instructions"
+              />
             </div>
             <div className="min-w-fit flex-1">
-              <FXTextArea name="description" label="Description" />
+              <FXTextArea
+                defaultValue={reciepeSingle?.description}
+                name="description"
+                label="Description"
+              />
             </div>
           </div>
 
@@ -242,7 +292,7 @@ const CreateRecipePage = () => {
             radius="none"
             type="submit"
           >
-            Create
+            Update
           </Button>
         </form>
       </FormProvider>
@@ -250,4 +300,4 @@ const CreateRecipePage = () => {
   );
 };
 
-export default CreateRecipePage;
+export default RecipeUpdate;

@@ -1,7 +1,7 @@
 "use client";
 import { IInput } from "@/src/types";
 import { Input } from "@nextui-org/input";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 interface IProps extends IInput {}
 
@@ -12,12 +12,14 @@ const FXInput = ({
   type = "text",
   name,
   label,
+  defaultValue,
 }: IProps) => {
   const {
     register,
     formState: { errors },
   } = useFormContext();
-
+  // set watch
+  const currentValue = useWatch({ name, defaultValue });
   return (
     <Input
       {...register(name)}
@@ -29,6 +31,7 @@ const FXInput = ({
       size={size}
       name={name}
       label={label}
+      value={currentValue || ""}
     />
   );
 };

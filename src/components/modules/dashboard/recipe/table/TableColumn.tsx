@@ -2,12 +2,23 @@
 
 import { ICategory, IRecipe } from "@/src/types";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { Image } from "@nextui-org/image";
 import Link from "next/link";
 
 export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
   const cellValue = recipe[columnKey as keyof IRecipe];
 
   switch (columnKey) {
+    case "image":
+      return (
+        <Image
+          isBlurred={cellValue ? false : true}
+          src={cellValue as string}
+          alt="recipe"
+          width={100}
+          height={70}
+        />
+      );
     case "title":
       return <> {cellValue}</>;
     case "category":

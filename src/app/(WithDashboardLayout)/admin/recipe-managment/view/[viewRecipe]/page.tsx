@@ -12,7 +12,6 @@ import {
   HandThumbDownIcon,
   ChatBubbleLeftIcon,
   CameraIcon,
-  ChevronRightIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -131,9 +130,9 @@ const RecipeDetailsView = ({ params }: { params: { viewRecipe: string } }) => {
           <ul>
             {recipe?.ingredients?.map(
               (ingredient: IIngredient, index: number) => (
-                <div className="flex items-center gap-2" key={index}>
+                <div className="flex items-center gap-2 mb-3" key={index}>
                   <CheckCircleIcon className="size-4 mt-1 text-green-500" />
-                  <li className="text-gray-700 dark:text-gray-300">
+                  <li className="text-gray-700 capitalize dark:text-gray-300">
                     {ingredient.name}: {ingredient.quantity}
                   </li>
                 </div>

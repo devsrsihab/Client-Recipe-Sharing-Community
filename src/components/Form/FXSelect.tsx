@@ -1,6 +1,6 @@
 import { IInput } from "@/src/types";
 import { Select, SelectItem } from "@nextui-org/select";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useController } from "react-hook-form";
 
 interface IProps extends IInput {
   options: {
@@ -9,24 +9,44 @@ interface IProps extends IInput {
   }[];
 }
 
-const FXSelect = ({ options, name, label, variant, disabled }: IProps) => {
+const FXSelect = ({
+  name,
+  label,
+  variant,
+  options,
+  disabled,
+  defaultValue,
+}: IProps) => {
   const {
-    register,
     formState: { errors },
+    control,
   } = useFormContext();
+
+  const { field } = useController({
+    name,
+    control,
+    defaultValue: defaultValue,
+  });
+
+  const errorMessage = errors[name]?.message as string | undefined;
 
   return (
     <Select
-      isDisabled={disabled}
+      {...field}
       variant={variant}
+      isDisabled={disabled}
       label={label}
-      {...register(name)}
-      errorMessage={errors[name] ? (errors[name].message as string) : ""}
+      selectedKeys={field.value ? [field.value] : []}
+      errorMessage={errorMessage}
+      isInvalid={errorMessage ? true : false}
       placeholder={label}
       className="max-w-xs"
+      onSelectionChange={(keys) => field.onChange(Array.from(keys)[0])}
     >
       {options.map((option) => (
-        <SelectItem key={option.key}>{option.label}</SelectItem>
+        <SelectItem key={option.key} value={option.key}>
+          {option.label}
+        </SelectItem>
       ))}
     </Select>
   );

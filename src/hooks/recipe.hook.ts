@@ -5,7 +5,9 @@ import {
   createRecipe,
   getRecipeDetails,
   getRecipes,
+  updateRecipe,
 } from "../services/Recipes";
+import { IRecipe } from "../types";
 
 // create recipes
 export const useCreateRecipeMutation = () => {
@@ -30,5 +32,15 @@ export const useGetRecipeDetails = (recipeId: string) => {
   return useQuery({
     queryKey: ["GET_RECIPE_DETAILS", recipeId],
     queryFn: async () => await getRecipeDetails(recipeId),
+  });
+};
+
+// update recipe
+export const useUpdateRecipeMutation = () => {
+  return useMutation<any, Error, FieldValues>({
+    mutationKey: ["UPDATE_RECIPE"],
+    mutationFn: async ({ id, data }) => await updateRecipe(id, data),
+    onSuccess: () => toast.success("Recipe Updated Successfully"),
+    onError: (error) => toast.error(error.message),
   });
 };

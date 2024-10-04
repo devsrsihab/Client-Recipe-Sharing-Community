@@ -11,7 +11,6 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  getKeyValue,
 } from "@nextui-org/table";
 import React, { useMemo, useState } from "react";
 import { renderCell } from "./TableColumn";
@@ -65,6 +64,7 @@ const RecipeDataTable = () => {
         }
       >
         <TableHeader>
+          <TableColumn key="image">Image</TableColumn>
           <TableColumn key="title">Title</TableColumn>
           <TableColumn key="category">Category</TableColumn>
           <TableColumn key="prepTime">Prep Time</TableColumn>

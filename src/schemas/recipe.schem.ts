@@ -15,10 +15,17 @@ export const createRecipeSchema = z.object({
   category: z
     .string({ required_error: "Category is required" })
     .min(1, "Category is required"),
-  prepTime: z
-    .string({ required_error: "Prep time is required" })
-    .min(1, "Prep time must be a positive integer"),
-  cookTime: z
-    .string({ required_error: "Cook time is required" })
-    .min(1, "Cook time must be a positive integer"),
+  prepTime: z.number().min(1, "Prep time is required"),
+  cookTime: z.number().min(1, "Cook time is required"),
+});
+
+// Update schema: make all fields optional using .partial()
+export const updateRecipeSchema = z.object({
+  title: z.string().min(1, "Title is required").optional(),
+  description: z.string().min(1, "Description is required").optional(),
+  ingredients: z.array(ingredientSchema).optional(),
+  instructions: z.string().min(1, "Instructions are required").optional(),
+  category: z.string().min(1, "Category is required").optional(),
+  prepTime: z.number().min(1, "Prep time is required").optional(),
+  cookTime: z.number().min(1, "Cook time is required").optional(),
 });

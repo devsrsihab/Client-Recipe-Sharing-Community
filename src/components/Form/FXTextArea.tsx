@@ -11,17 +11,19 @@ const FXTextArea = ({
   required = false,
   name,
   label,
+  defaultValue,
 }: IProps) => {
   const {
     register,
     formState: { errors },
   } = useFormContext();
 
-  const currentValue = useWatch({name})
+  // Watch the current value of the textarea field
+  const currentValue = useWatch({ name, defaultValue });
 
   return (
     <Textarea
-      {...register(name)}
+      {...register(name)} // No need for `value: defaultValue` here
       errorMessage={errors[name] ? (errors[name].message as string) : ""}
       isInvalid={!!errors[name]}
       minRows={6}
@@ -30,7 +32,7 @@ const FXTextArea = ({
       size={size}
       name={name}
       label={label}
-      value={currentValue || ""}
+      value={currentValue || ""} // Use the watched value or empty string
     />
   );
 };

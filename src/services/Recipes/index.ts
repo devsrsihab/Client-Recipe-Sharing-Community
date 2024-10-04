@@ -34,3 +34,17 @@ export const getRecipeDetails = async (recipeId: string) => {
     throw new Error("Failed to fetch recipe details");
   }
 };
+
+// update recipe
+export const updateRecipe = async (
+  recipeId: string,
+  recipeData: Partial<IRecipe>
+) => {
+  try {
+    const res = await axiosInstance.put(`/recipes/${recipeId}`, recipeData);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to update recipe:", error);
+    throw new Error("Failed to update recipe");
+  }
+};
