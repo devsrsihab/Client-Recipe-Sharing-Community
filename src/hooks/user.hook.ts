@@ -28,7 +28,7 @@ export const useGetUserById = (id: string) => {
   });
 };
 
-// TODO. delete user by id
+// delete user by id
 export const useDeleteUserByIdMutation = () => {
   const queryClient = useQueryClient();
 
@@ -43,13 +43,13 @@ export const useDeleteUserByIdMutation = () => {
   });
 };
 
-// TODO. change role
+//  change role
 export const useChangeRoleMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["CHANGE_ROLE"],
-    mutationFn: async ({ id, data }) => await changeRole(id, data),
+    mutationFn: async ({ id, role }) => await changeRole(id, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ALL_USERS"] });
       toast.success("User Role Updated Successfully");
@@ -58,13 +58,13 @@ export const useChangeRoleMutation = () => {
   });
 };
 
-// TODO. change status
+// change status
 export const useChangeStatusMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["CHANGE_STATUS"],
-    mutationFn: async ({ id, data }) => await changeStatus(id, data),
+    mutationFn: async ({ id, status }) => await changeStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ALL_USERS"] });
       toast.success("User Status Updated Successfully");

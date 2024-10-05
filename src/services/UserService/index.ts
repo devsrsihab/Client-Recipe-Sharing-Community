@@ -22,24 +22,25 @@ export const getUserById = async (id: string) => {
   return response.data;
 };
 
-// TODO. delete user by id
+// delete user by id
 export const deleteUserById = async (id: string) => {
   const response = await axiosInstance.delete(`/users/admin-user/${id}`);
   return response.data;
 };
 
-// TODO. change role
-export const changeRole = async (id: string, data: any) => {
-  const response = await axiosInstance.patch(`/users/change-role/${id}`, data);
+// change role
+export const changeRole = async (id: string, role: any) => {
+  const response = await axiosInstance.patch(`/users/change-role/${id}`, {
+    role,
+  });
   return response.data;
 };
 
-// TODO. change status
-export const changeStatus = async (id: string, data: any) => {
-  const response = await axiosInstance.patch(
-    `/users/change-status/${id}`,
-    data
-  );
+// change status
+export const changeStatus = async (id: string, status: any) => {
+  const response = await axiosInstance.patch(`/users/change-status/${id}`, {
+    status,
+  });
   return response.data;
 };
 

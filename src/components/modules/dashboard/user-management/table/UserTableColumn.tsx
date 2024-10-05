@@ -1,12 +1,11 @@
 "use client";
 
-import DeleteRecipeModal from "@/src/components/modal/DeleteRecipeModal";
 import UserDeleteModal from "@/src/components/modal/UserDeleteModal";
-import FXDropSelector from "@/src/components/UI/FXDropSelector";
 import { IUser } from "@/src/types";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Image } from "@nextui-org/image";
 import Link from "next/link";
+import FXDropRoleAndStatusChange from "../FXDropRoleAndStatusChange";
 
 export const userRenderCell = (user: IUser, columnKey: React.Key) => {
   const cellValue = user[columnKey as keyof IUser];
@@ -23,11 +22,6 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
     { key: "premium", value: "premium" },
     { key: "blocked", value: "blocked" },
   ];
-
-  // role update handler
-  const handleRoleUpdate = (role: string) => {
-    console.log(role);
-  };
 
   switch (columnKey) {
     case "profilePicture":
@@ -62,22 +56,24 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
     case "role":
       return (
         <div className="flex ">
-          <FXDropSelector
+          <FXDropRoleAndStatusChange
             menuItems={userRoles}
             defaultItem={cellValue as string}
             label="Select A Role"
-            getValueFunction={handleRoleUpdate}
+            userId={user._id}
+            whichFor="role"
           />
         </div>
       );
     case "status":
       return (
         <>
-          <FXDropSelector
+          <FXDropRoleAndStatusChange
             menuItems={userStatus}
             defaultItem={cellValue as string}
-            label="Select A Role"
-            getValueFunction={handleRoleUpdate}
+            label="change A Status"
+            userId={user._id}
+            whichFor="status"
           />
         </>
       );
