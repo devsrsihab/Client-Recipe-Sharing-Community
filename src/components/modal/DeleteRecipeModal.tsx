@@ -29,7 +29,11 @@ export default function DeleteRecipeModal({
 
   return (
     <>
-      <Button color="danger" isIconOnly={!!buttonContent} onPress={onOpen}>
+      <Button
+        className="bg-default"
+        isIconOnly={!!buttonContent}
+        onPress={onOpen}
+      >
         {buttonContent}
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

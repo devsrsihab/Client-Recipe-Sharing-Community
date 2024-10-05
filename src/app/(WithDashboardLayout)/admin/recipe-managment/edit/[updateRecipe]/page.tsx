@@ -4,10 +4,10 @@ import { PlusIcon, TrashIcon } from "@/src/assets/icons";
 import FXInput from "@/src/components/Form/FXInput";
 import FXSelect from "@/src/components/Form/FXSelect";
 import FXTextArea from "@/src/components/Form/FXTextArea";
+import { RECIPE_ISPAID_OPTIONS, RECIPE_STATUS_OPTIONS } from "@/src/constant";
 import { useUser } from "@/src/context/user.provider";
 import { useGetCategories } from "@/src/hooks/categories.hook";
 import {
-  useCreateRecipeMutation,
   useGetRecipeDetails,
   useUpdateRecipeMutation,
 } from "@/src/hooks/recipe.hook";
@@ -89,6 +89,7 @@ const RecipeUpdate = ({ params }: { params: { updateRecipe: string } }) => {
       ...data,
       prepTime: Number(data.prepTime),
       cookTime: Number(data.cookTime),
+      isPaid: data.isPaid === "true" ? true : false,
       image: imageUrl || "",
     };
 
@@ -119,8 +120,12 @@ const RecipeUpdate = ({ params }: { params: { updateRecipe: string } }) => {
   useEffect(() => {
     if (recipeSingleData?.data) {
       const recipe = recipeSingleData.data;
+
+      methods.setValue("category", recipe?.category?._id || "");
       methods.setValue("title", recipe.title);
       methods.setValue("category", recipe?.category?._id || "");
+      methods.setValue("isPaid", String(recipe?.isPaid));
+      methods.setValue("status", recipe?.status);
       methods.setValue("prepTime", recipe.prepTime);
       methods.setValue("cookTime", recipe.cookTime);
       methods.setValue("instructions", recipe.instructions);
@@ -148,6 +153,8 @@ const RecipeUpdate = ({ params }: { params: { updateRecipe: string } }) => {
     );
   }
 
+  console.log(reciepeSingle);
+
   return (
     <div className="h-full rounded-xl bg-gradient-to-b from-default-100 px-20 py-12">
       <h1 className="text-2xl font-semibold">Update Recipe</h1>
@@ -167,9 +174,29 @@ const RecipeUpdate = ({ params }: { params: { updateRecipe: string } }) => {
               <FXSelect
                 options={categorieOptions}
                 disabled={categoryLoading}
-                defaultValue={reciepeSingle?.category?._id || ""}
                 name="category"
                 label="Category"
+                variant="bordered"
+              />
+            </div>
+          </div>
+
+          {/* status and ispain */}
+          <div className="flex flex-wrap gap-4 py-2">
+            <div className="min-w-fit flex-1">
+              <FXSelect
+                options={RECIPE_ISPAID_OPTIONS}
+                name="isPaid"
+                label="Is Paid"
+                variant="bordered"
+              />
+            </div>
+            <div className="min-w-fit flex-1">
+              <FXSelect
+                options={RECIPE_STATUS_OPTIONS}
+                defaultValue={reciepeSingle?.isPaid}
+                name="status"
+                label="Status"
                 variant="bordered"
               />
             </div>

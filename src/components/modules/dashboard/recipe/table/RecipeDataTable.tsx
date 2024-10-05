@@ -65,8 +65,7 @@ const RecipeDataTable = () => {
           <TableColumn key="image">Image</TableColumn>
           <TableColumn key="title">Title</TableColumn>
           <TableColumn key="category">Category</TableColumn>
-          <TableColumn key="prepTime">Prep Time</TableColumn>
-          <TableColumn key="cookTime">Cook Time</TableColumn>
+          <TableColumn key="status">Status</TableColumn>
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody

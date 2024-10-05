@@ -15,6 +15,8 @@ export interface IRecipe {
   upvotedBy: string[];
   downvotedBy: string[];
   createdBy: ICreatedBy;
+  isPaid: boolean;
+  status: string;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
