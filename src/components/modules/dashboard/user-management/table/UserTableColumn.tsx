@@ -1,6 +1,7 @@
 "use client";
 
 import DeleteRecipeModal from "@/src/components/modal/DeleteRecipeModal";
+import UserDeleteModal from "@/src/components/modal/UserDeleteModal";
 import FXDropSelector from "@/src/components/UI/FXDropSelector";
 import { IUser } from "@/src/types";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
@@ -99,7 +100,7 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
           </Link>
 
           <span className="cursor-pointer text-lg text-danger active:opacity-50">
-            <DeleteRecipeModal
+            <UserDeleteModal
               buttonContent={<TrashIcon className="size-5" />}
               recipeid={user?._id}
             />

@@ -20,7 +20,7 @@ export const useGetAllUsers = () => {
   });
 };
 
-// TODO. get user by id
+//  get user by id
 export const useGetUserById = (id: string) => {
   return useQuery({
     queryKey: ["SINGLE_USER", id],

@@ -16,7 +16,7 @@ export const getAllUsers = async () => {
   return response.data;
 };
 
-// TODO. get user by id
+//. get user by id
 export const getUserById = async (id: string) => {
   const response = await axiosInstance.get(`/users/admin-user/${id}`);
   return response.data;
