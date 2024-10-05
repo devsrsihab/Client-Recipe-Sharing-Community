@@ -9,6 +9,12 @@ import {
   UserPlusIcon,
   CheckBadgeIcon,
   KeyIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ExclamationTriangleIcon,
+  ClockIcon,
+  NoSymbolIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
@@ -33,6 +39,25 @@ const UserDetailsView = ({ params }: { params: { viewUser: string } }) => {
       </div>
     );
   }
+
+  const getStatusInfo = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "active":
+        return { color: "green", icon: CheckCircleIcon };
+      case "pending":
+        return { color: "yellow", icon: ClockIcon };
+      case "suspended":
+        return { color: "red", icon: NoSymbolIcon };
+      case "premium":
+        return { color: "purple", icon: SparklesIcon };
+      case "expired-premium":
+        return { color: "orange", icon: ExclamationTriangleIcon };
+      case "blocked":
+        return { color: "red", icon: XCircleIcon };
+      default:
+        return { color: "gray", icon: ExclamationTriangleIcon };
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 dark:bg-gray-800 dark:text-gray-100">
@@ -105,10 +130,21 @@ const UserDetailsView = ({ params }: { params: { viewUser: string } }) => {
               </div>
               <div className="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <CheckBadgeIcon className="h-6 w-6 text-green-500 mr-3" />
+                  {(() => {
+                    const { color, icon: StatusIcon } = getStatusInfo(
+                      user?.status
+                    );
+                    return (
+                      <StatusIcon
+                        className={`h-6 w-6 text-${color}-500 mr-3`}
+                      />
+                    );
+                  })()}
                   <span className="font-medium">Status:</span>
                 </div>
-                <p className="mt-2 text-gray-700 dark:text-gray-300 capitalize">
+                <p
+                  className={`mt-2 text-${getStatusInfo(user?.status).color}-500 capitalize font-semibold`}
+                >
                   {user?.status}
                 </p>
               </div>

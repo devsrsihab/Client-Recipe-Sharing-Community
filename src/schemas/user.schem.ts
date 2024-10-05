@@ -20,4 +20,7 @@ export const updateUserSchema = z.object({
     .min(8, "Password must be at least 8 characters long")
     .optional(),
   role: z.enum(["admin", "user"]).optional(),
+  status: z.enum(["active", "pending", "blocked"]).optional(),
+  isPremium: z.string().optional(),
+  profilePicture: z.string().optional(),
 });

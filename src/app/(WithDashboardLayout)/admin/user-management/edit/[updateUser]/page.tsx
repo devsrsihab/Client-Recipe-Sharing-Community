@@ -10,6 +10,7 @@ import { updateUserSchema } from "@/src/schemas/user.schem";
 
 import { IUser } from "@/src/types";
 import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
+import { Radio, RadioGroup } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
@@ -34,7 +35,6 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
   } = useGetUserById(updateUser as string);
 
   const userSingle = userSingleData?.data;
-  console.log(userSingle);
 
   const {
     mutate: handleUpdateUser,
@@ -52,10 +52,14 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
 
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    
     let profilePictureUrl = userSingle?.profilePicture;
     if (imageFile) {
       profilePictureUrl = await cloudinaryUpload(imageFile);
     }
+
+    console.log(data);
+    
     const userData: Partial<IUser> = {
       name: {
         firstName: data.firstName,
@@ -63,9 +67,12 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
       },
       email: data.email,
       role: data.role,
+      status: data.status,
+      isPremium: data.isPremium === "true" ? true : false,
       profilePicture: profilePictureUrl || "",
     };
 
+    console.log("Submitting userData:", userData); // Add this log
     handleUpdateUser({ id: updateUser, data: userData });
   };
 
@@ -89,6 +96,8 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
       methods.setValue("lastName", userSingle.name.lastName);
       methods.setValue("email", userSingle.email);
       methods.setValue("role", userSingle.role);
+      methods.setValue("status", userSingle.status);
+      methods.setValue("isPremium", String(userSingle.isPremium));
       setImagePreview(userSingle.profilePicture || null);
     }
   }, [userSingle, methods]);
@@ -114,6 +123,18 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
   const roleOptions = [
     { key: "user", label: "User" },
     { key: "admin", label: "Admin" },
+  ];
+
+  const statusOptions = [
+    { key: "active", label: "Active" },
+    { key: "pending", label: "Pending" },
+    { key: "blocked", label: "Blocked" },
+  ];
+
+  // user is premium
+  const isPremiumOptions = [
+    {key: "true", label: "Yes"},
+    {key: "false", label: "No"},
   ];
 
   return (
@@ -142,6 +163,26 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
                 options={roleOptions}
                 name="role"
                 label="Role"
+                variant="bordered"
+              />
+            </div>
+          </div>
+
+          {/* status and isPremium */}
+          <div className="flex flex-wrap gap-4 py-2">
+            <div className="min-w-fit flex-1">
+              <FXSelect
+                options={statusOptions}
+                name="status"
+                label="Status"
+                variant="bordered"
+              />
+            </div>
+            <div className="min-w-fit flex-1">
+               <FXSelect
+                options={isPremiumOptions}
+                name="isPremium"
+                label="Is Premium"
                 variant="bordered"
               />
             </div>

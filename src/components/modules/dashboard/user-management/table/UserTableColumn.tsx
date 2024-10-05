@@ -18,8 +18,6 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
   const userStatus = [
     { key: "active", value: "active" },
     { key: "pending", value: "pending" },
-    { key: "suspended", value: "suspended" },
-    { key: "premium", value: "premium" },
     { key: "blocked", value: "blocked" },
   ];
 

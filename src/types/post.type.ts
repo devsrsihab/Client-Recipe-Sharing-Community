@@ -46,6 +46,7 @@ export interface IUser {
   profilePicture?: string;
   createdAt?: string;
   updatedAt?: string;
+  isPremium?: boolean;
   __v?: number;
 }
 
