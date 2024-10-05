@@ -41,7 +41,7 @@ const UserDataTable = () => {
         topContent={
           <div className="flex justify-end">
             <Button>
-              <Link href="/admin/recipe-managment/create">Add Recipe</Link>
+              <Link href="/admin/user-management/create">Add User</Link>
             </Button>
           </div>
         }

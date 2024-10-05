@@ -44,7 +44,7 @@ export const changeStatus = async (id: string, status: any) => {
   return response.data;
 };
 
-// TODO. create user
+//  create user
 export const createUser = async (data: any) => {
   const response = await axiosInstance.post("/users/admin-user", data);
   return response.data;

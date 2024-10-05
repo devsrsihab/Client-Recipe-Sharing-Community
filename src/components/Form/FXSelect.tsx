@@ -7,6 +7,7 @@ interface IProps extends IInput {
     key: string;
     label: string;
   }[];
+  className?: string;
 }
 
 const FXSelect = ({
@@ -16,6 +17,7 @@ const FXSelect = ({
   options,
   disabled,
   defaultValue,
+  className,
 }: IProps) => {
   const {
     formState: { errors },
@@ -44,7 +46,7 @@ const FXSelect = ({
       onSelectionChange={(keys) => field.onChange(Array.from(keys)[0])}
     >
       {options.map((option) => (
-        <SelectItem key={option.key} value={option.key}>
+        <SelectItem className={className} key={option.key} value={option.key}>
           {option.label}
         </SelectItem>
       ))}

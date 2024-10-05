@@ -1,14 +1,12 @@
 "use client";
 
-import { PlusIcon, TrashIcon } from "@/src/assets/icons";
 import FXInput from "@/src/components/Form/FXInput";
 import FXSelect from "@/src/components/Form/FXSelect";
-import FXTextArea from "@/src/components/Form/FXTextArea";
+import { USER_ROLE } from "@/src/constant";
 import { useUser } from "@/src/context/user.provider";
-import { useGetCategories } from "@/src/hooks/categories.hook";
-import { useCreateRecipeMutation } from "@/src/hooks/recipe.hook";
-import { createRecipeSchema } from "@/src/schemas/recipe.schem";
-import { IRecipe } from "@/src/types";
+import { useCreateUserMutation } from "@/src/hooks/user.hook";
+import { userCreateSchema } from "@/src/schemas/user.schem";
+import { IUser } from "@/src/types";
 import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,57 +17,41 @@ import {
   FieldValues,
   FormProvider,
   SubmitHandler,
-  useFieldArray,
   useForm,
 } from "react-hook-form";
 
-const CreateRecipePage = () => {
+const CreateUserPage = () => {
   // define state
   const [imageFile, setImageFile] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
   const {
-    mutate: createRecipe,
-    isPending: recipePending,
+    mutate: createUser,
+    isPending: userPending,
     isSuccess,
-  } = useCreateRecipeMutation();
-  // get categories
-  const { data: categoriesData, isLoading: categoryLoading } =
-    useGetCategories();
+  } = useCreateUserMutation();
 
   const { user } = useUser();
-  // define option let
-  let categorieOptions: { key: string; label: string }[] = [];
-
-  if (categoriesData?.data && !categoryLoading) {
-    categorieOptions = categoriesData?.data?.map(
-      (category: { _id: string; name: string }) => ({
-        key: category._id,
-        label: category.name,
-      })
-    );
-  }
 
   // define methods
   const methods = useForm({
-    resolver: zodResolver(createRecipeSchema),
-    defaultValues: {
-      ingredients: [{ name: "", quantity: "" }],
-    },
+    resolver: zodResolver(userCreateSchema),
   });
 
-  const { control, handleSubmit, reset } = methods;
-
-  // init usefieldarray obj
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "ingredients",
-  });
+  const {
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = methods;
 
   // if the data suucessfully submit then reset the form
   useEffect(() => {
     if (isSuccess) {
       reset({
-        ingredients: [{ name: "", quantity: "" }],
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        role: "",
       });
       setImageFile([]);
       setImagePreview([]);
@@ -78,30 +60,17 @@ const CreateRecipePage = () => {
 
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    const imageUrl = await cloudinaryUpload(imageFile[0]);
-    const recipeData: Partial<IRecipe> = {
+    let imageUrl = "";
+    if (imageFile.length > 0 && data.profilePicture) {
+      imageUrl = await cloudinaryUpload(imageFile[0]);
+    }
+    const userData: Partial<IUser> = {
       ...data,
-      title: data.title,
-      prepTime: Number(data.prepTime),
-      cookTime: Number(data.cookTime),
-      category: data.category,
-      description: data.description,
-      ingredients: data.ingredients.map(
-        (question: { name: string; quantity: string }) => ({
-          name: question.name,
-          quantity: question.quantity,
-        })
-      ),
-      image: imageUrl || "",
+      name: { firstName: data.firstName, lastName: data.lastName },
+      profilePicture: imageUrl || "",
     };
 
-    createRecipe(recipeData);
-    console.log(recipeData);
-  };
-
-  // handle field array append
-  const handleFieldAppent = () => {
-    append({ name: "", quantity: "" });
+    createUser(userData);
   };
 
   // handle image change
@@ -121,85 +90,48 @@ const CreateRecipePage = () => {
 
   return (
     <div className="h-full rounded-xl bg-gradient-to-b from-default-100 px-20 py-12">
-      <h1 className="text-2xl font-semibold">Post a found item</h1>
+      <h1 className="text-2xl font-semibold">Create a new user</h1>
       <Divider className="my-5" />
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* title and description */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              <FXInput name="title" label="Title" />
+              <FXInput name="firstName" label="First Name" />
             </div>
             <div className="min-w-fit flex-1">
-              <FXSelect
-                options={categorieOptions}
-                disabled={categoryLoading}
-                name="category"
-                label="Category"
-                variant="bordered"
-              />
+              <FXInput name="lastName" label="Last Name" />
             </div>
           </div>
 
           {/* prepTime and cookTime */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              <FXInput name="prepTime" type="number" label="Prep Time" />
+              <FXInput name="email" label="Email" />
             </div>
             <div className="min-w-fit flex-1">
-              <FXInput name="cookTime" type="number" label="Cook Time" />
+              <FXInput name="password" label="Password" />
             </div>
           </div>
 
           {/* instructions and description */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              <FXTextArea name="instructions" label="Instructions" />
+              <FXSelect
+                className="uppercase"
+                options={USER_ROLE}
+                name="role"
+                label="Role"
+                variant="bordered"
+              />
             </div>
-            <div className="min-w-fit flex-1">
-              <FXTextArea name="description" label="Description" />
-            </div>
-          </div>
-
-          {/* ingredients list */}
-          <Divider className="my-5" />
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl ">Ingredients List</h2>
-            <Button
-              isIconOnly
-              onClick={() => handleFieldAppent()}
-              radius="none"
-              className="p-1"
-            >
-              <PlusIcon />
-            </Button>
-          </div>
-
-          {/* field loopt */}
-          <div className="space-y-3 my-5">
-            {fields.map((field, index) => (
-              <div className="flex gap-3 items-center" key={field.id}>
-                <FXInput name={`ingredients.${index}.name`} label="Name" />
-                <FXInput
-                  name={`ingredients.${index}.quantity`}
-                  label="Quantity"
-                />
-                <Button
-                  isIconOnly
-                  onClick={() => remove(index)}
-                  className="bg-red-500 p-2"
-                  radius="none"
-                >
-                  <TrashIcon />
-                </Button>
-              </div>
-            ))}
+            <div className="min-w-fit flex-1"></div>
           </div>
 
           {/* image */}
           <div>
             <Divider className="mt-10" />
-            <h2 className="text-2xl mt-5">Image</h2>
+            <h2 className="text-2xl mt-5">Profile Picture</h2>
             <div className="flex flex-wrap gap-4 py-2">
               <div className="min-h-fit flex-1">
                 {/* image preview div */}
@@ -223,13 +155,13 @@ const CreateRecipePage = () => {
                   htmlFor="image"
                   className="bg-default-100 flex justify-center items-center h-[200px] w-full rounded-md p-4"
                 >
-                  <span>Upload Image</span>
+                  <span>Upload Profile Image</span>
                 </label>
                 <input
                   onChange={(e) => handleImageChange(e)}
                   className="hidden"
                   type="file"
-                  name="image"
+                  name="profilePicture"
                   id="image"
                 />
               </div>
@@ -237,7 +169,7 @@ const CreateRecipePage = () => {
           </div>
 
           <Button
-            isLoading={recipePending}
+            isLoading={userPending}
             className="mt-5"
             radius="none"
             type="submit"
@@ -250,4 +182,4 @@ const CreateRecipePage = () => {
   );
 };
 
-export default CreateRecipePage;
+export default CreateUserPage;

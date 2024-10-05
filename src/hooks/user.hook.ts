@@ -73,7 +73,7 @@ export const useChangeStatusMutation = () => {
   });
 };
 
-// TODO. create user
+//  create user
 export const useCreateUserMutation = () => {
   const queryClient = useQueryClient();
 

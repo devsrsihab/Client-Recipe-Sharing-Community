@@ -121,7 +121,7 @@ const CreateRecipePage = () => {
 
   return (
     <div className="h-full rounded-xl bg-gradient-to-b from-default-100 px-20 py-12">
-      <h1 className="text-2xl font-semibold">Post a found item</h1>
+      <h1 className="text-2xl font-semibold">Create a new recipe</h1>
       <Divider className="my-5" />
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
