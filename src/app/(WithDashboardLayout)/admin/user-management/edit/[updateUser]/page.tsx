@@ -7,10 +7,9 @@ import {
   useUpdateUserByIdMutation,
 } from "@/src/hooks/user.hook";
 import { updateUserSchema } from "@/src/schemas/user.schem";
+import { IUser } from "@/src/types/post.type";
 
-import { IUser } from "@/src/types";
 import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
-import { Radio, RadioGroup } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";

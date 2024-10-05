@@ -50,7 +50,7 @@ export const createUser = async (data: any) => {
   return response.data;
 };
 
-// TODO. update user by id
+//  update user by id
 export const updateUserById = async (id: string, data: any) => {
   const response = await axiosInstance.put(`/users/admin-user/${id}`, data);
   return response.data;

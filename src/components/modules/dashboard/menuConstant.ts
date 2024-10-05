@@ -2,7 +2,10 @@ import {
   ChartPieIcon,
   FolderIcon,
   HomeIcon,
+  CakeIcon,
   UsersIcon,
+  DocumentTextIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
 export const userTest = {
@@ -21,19 +24,19 @@ export const adminNavigation = [
   {
     name: "Recipe Management",
     href: "/admin/recipe-managment",
-    icon: UsersIcon,
+    icon: CakeIcon,
     current: false,
   },
   {
     name: "Content Moderation",
     href: "",
-    icon: FolderIcon,
+    icon: DocumentTextIcon,
     current: false,
     children: [
       {
         name: "Comments",
         href: "/admin/comments-managment",
-        icon: UsersIcon,
+        icon: ChatBubbleLeftRightIcon,
         current: false,
       },
     ],

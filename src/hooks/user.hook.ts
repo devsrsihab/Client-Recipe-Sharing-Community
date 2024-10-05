@@ -88,7 +88,7 @@ export const useCreateUserMutation = () => {
   });
 };
 
-// TODO. update user by id
+//  update user by id
 export const useUpdateUserByIdMutation = () => {
   const queryClient = useQueryClient();
 
