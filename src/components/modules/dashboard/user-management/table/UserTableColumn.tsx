@@ -30,6 +30,7 @@ export const userRenderCell = (user: IUser, columnKey: React.Key) => {
               isBlurred={cellValue ? false : true}
               src={cellValue as string}
               alt="user"
+              className="object-contain rounded"
               width={100}
               height={70}
             />
