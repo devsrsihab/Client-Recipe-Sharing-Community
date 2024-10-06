@@ -6,8 +6,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { IUser } from "../types";
 import { getCurrentuser } from "../services/AuthService";
+import { IUser } from "../types/post.type";
 
 const userContext = createContext<IuserProviderValues | undefined>(undefined);
 
@@ -26,7 +26,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // handle user
   const handleUser = async () => {
     const user = await getCurrentuser();
-    setUser(user);
+    setUser(user as IUser);
     setIsLoading(false);
   };
 
