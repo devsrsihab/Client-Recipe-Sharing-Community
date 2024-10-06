@@ -1,6 +1,7 @@
 "use client";
 
 import FXInput from "@/src/components/Form/FXInput";
+import FXTextArea from "@/src/components/Form/FXTextArea";
 import { useUser } from "@/src/context/user.provider";
 import { useChangePasswordMutation } from "@/src/hooks/auth.hook";
 import { useGetUserById } from "@/src/hooks/user.hook";
@@ -55,7 +56,7 @@ const EditProfilePage = () => {
 
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data);
+    console.log("Form data:", data); // Log the entire form data
     let profilePictureUrl = userSingle?.profilePicture;
     if (imageFile) {
       profilePictureUrl = await cloudinaryUpload(imageFile);
@@ -67,8 +68,9 @@ const EditProfilePage = () => {
         lastName: data.lastName,
       },
       profilePicture: profilePictureUrl || "",
+      bio: data.bio, // Ensure this matches the name in your form
     };
-    console.log(userData);
+    console.log("User data to be sent:", userData);
 
     handleUpdateUser(userData);
   };
@@ -99,6 +101,7 @@ const EditProfilePage = () => {
       methods.setValue("firstName", userSingle.name.firstName);
       methods.setValue("lastName", userSingle.name.lastName);
       methods.setValue("email", userSingle.email);
+      methods.setValue("bio", userSingle.bio);
       setImagePreview(userSingle.profilePicture || null);
     }
   }, [userSingle, methods]);
@@ -139,10 +142,13 @@ const EditProfilePage = () => {
             </div>
           </div>
 
-          {/* email and role */}
+          {/* email and bio */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
               <FXInput isDisabled={true} name="email" label="Email" />
+            </div>
+            <div className="min-w-fit flex-1">
+              <FXTextArea name="bio" label="Bio" />
             </div>
           </div>
 

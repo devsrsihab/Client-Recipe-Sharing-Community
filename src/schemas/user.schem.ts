@@ -23,4 +23,5 @@ export const updateUserSchema = z.object({
   status: z.enum(["active", "pending", "blocked"]).optional(),
   isPremium: z.string().optional(),
   profilePicture: z.string().optional(),
+  bio: z.string().optional(),
 });

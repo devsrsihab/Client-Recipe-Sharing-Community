@@ -41,6 +41,7 @@ export interface IUser {
   };
   role: string;
   username: string;
+  bio: string;
   email: string;
   status?: string;
   mobileNumber: string;
