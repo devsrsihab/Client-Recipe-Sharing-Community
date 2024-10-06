@@ -10,6 +10,7 @@ import {
   Cog6ToothIcon,
   XMarkIcon,
   ChevronDownIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -17,6 +18,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { IMenu } from "@/src/types/sidebarMenu.type";
 import { userTest } from "./menuConstant";
+import { useUser } from "@/src/context/user.provider";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -33,6 +35,8 @@ const SidebarMenu = ({
 }) => {
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
   const pathname = usePathname();
+  // current suer
+  const { user } = useUser();
 
   // toggle dropdown
   const toggleDropdown = (name: string) => {
@@ -165,20 +169,22 @@ const SidebarMenu = ({
                     </ul>
                   </li>
 
-                  {userTest?.role === "admin" && (
-                    <li className="mt-auto">
-                      <a
-                        href="#"
-                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                      >
-                        <Cog6ToothIcon
-                          aria-hidden="true"
-                          className="h-6 w-6 shrink-0"
-                        />
-                        Settings
-                      </a>
-                    </li>
-                  )}
+                  <li className="mt-auto">
+                    <Link
+                      href={
+                        user?.role === "admin"
+                          ? "/admin/profile"
+                          : "/user/profile"
+                      }
+                      className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                    >
+                      <UserCircleIcon
+                        aria-hidden="true"
+                        className="h-6 w-6 shrink-0"
+                      />
+                      Profile
+                    </Link>
+                  </li>
                 </ul>
               </nav>
             </div>
@@ -207,20 +213,20 @@ const SidebarMenu = ({
                 </ul>
               </li>
 
-              {userTest?.role === "admin" && (
-                <li className="mt-auto">
-                  <a
-                    href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
-                  >
-                    <Cog6ToothIcon
-                      aria-hidden="true"
-                      className="h-6 w-6 shrink-0"
-                    />
-                    Settings
-                  </a>
-                </li>
-              )}
+              <li className="mt-auto">
+                <Link
+                  href={
+                    user?.role === "admin" ? "/admin/profile" : "/user/profile"
+                  }
+                  className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                >
+                  <UserCircleIcon
+                    aria-hidden="true"
+                    className="h-6 w-6 shrink-0"
+                  />
+                  Profile
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

@@ -25,6 +25,7 @@ export const useGetUserById = (id: string) => {
   return useQuery({
     queryKey: ["SINGLE_USER", id],
     queryFn: async () => await getUserById(id),
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -36,7 +37,7 @@ export const useDeleteUserByIdMutation = () => {
     mutationKey: ["DELETE_USER_BY_ID"],
     mutationFn: async (id) => await deleteUserById(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ALL_USERS"] });
+      queryClient.invalidateQueries({ queryKey: ["ALL_USERS", "SINGLE_USER"] });
       toast.success("User Deleted Successfully");
     },
     onError: (error) => toast.error(error.message),
@@ -51,7 +52,7 @@ export const useChangeRoleMutation = () => {
     mutationKey: ["CHANGE_ROLE"],
     mutationFn: async ({ id, role }) => await changeRole(id, role),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ALL_USERS"] });
+      queryClient.invalidateQueries({ queryKey: ["ALL_USERS", "SINGLE_USER"] });
       toast.success("User Role Updated Successfully");
     },
     onError: (error) => toast.error(error.message),
@@ -66,7 +67,7 @@ export const useChangeStatusMutation = () => {
     mutationKey: ["CHANGE_STATUS"],
     mutationFn: async ({ id, status }) => await changeStatus(id, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ALL_USERS"] });
+      queryClient.invalidateQueries({ queryKey: ["ALL_USERS", "SINGLE_USER"] });
       toast.success("User Status Updated Successfully");
     },
     onError: (error) => toast.error(error.message),
@@ -96,7 +97,7 @@ export const useUpdateUserByIdMutation = () => {
     mutationKey: ["UPDATE_USER_BY_ID"],
     mutationFn: async ({ id, data }) => await updateUserById(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ALL_USERS"] });
+      queryClient.invalidateQueries({ queryKey: ["ALL_USERS", "SINGLE_USER"] });
       toast.success("User Updated Successfully");
     },
     onError: (error) => toast.error(error.message),

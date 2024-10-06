@@ -1,5 +1,7 @@
+import UserProfile from "@/src/components/modules/dashboard/UserProfile";
+
 const AdminProfilePage = () => {
-  return <div>Admin Profile Page</div>;
+  return <UserProfile />;
 };
 
 export default AdminProfilePage;

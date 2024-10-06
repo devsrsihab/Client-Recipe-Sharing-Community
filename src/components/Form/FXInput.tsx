@@ -3,7 +3,9 @@ import { IInput } from "@/src/types";
 import { Input } from "@nextui-org/input";
 import { useFormContext, useWatch } from "react-hook-form";
 
-interface IProps extends IInput {}
+interface IProps extends IInput {
+  isDisabled?: boolean;
+}
 
 const FXInput = ({
   variant = "bordered",
@@ -13,6 +15,7 @@ const FXInput = ({
   name,
   label,
   defaultValue,
+  isDisabled = false,
 }: IProps) => {
   const {
     register,
@@ -32,6 +35,7 @@ const FXInput = ({
       name={name}
       label={label}
       value={currentValue || ""}
+      isDisabled={isDisabled}
     />
   );
 };
