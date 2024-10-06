@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getFollowerList,
   getFollowingList,
+  getUserSingleInfo,
   updateUserProfile,
 } from "../services/UserProfile";
 import { FieldValues } from "react-hook-form";
@@ -18,6 +19,15 @@ export const useUpdateUserProfileMutation = () => {
       toast.success("User Updated Successfully");
     },
     onError: (error) => toast.error(error.message),
+  });
+};
+
+// get user single info
+export const useGetUserSingleInfo = () => {
+  return useQuery({
+    queryKey: ["USER_PROFILE_INFO"],
+    queryFn: async () => await getUserSingleInfo(),
+    refetchOnWindowFocus: false,
   });
 };
 

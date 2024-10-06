@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { getCurrentuser } from "./services/AuthService";
-import { IUser } from "./types";
+import { IUser } from "./types/post.type";
 
 const AuthRoutes = ["/auth/login", "/auth/register"];
 // role based routes
 const RoleBasedRoutes = {
-  ADMIN: [/^\/admin/],
-  USER: [/^\/profile/],
+  admin: [/^\/admin/],
+  user: [/^\/user/, /^\/myprofile/],
 };
 
 type TRole = keyof typeof RoleBasedRoutes;
@@ -16,7 +16,7 @@ type TRole = keyof typeof RoleBasedRoutes;
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const user: IUser | null = await getCurrentuser();
+  const user: Partial<IUser> | null = await getCurrentuser();
 
   if (!user) {
     if (AuthRoutes.includes(pathname)) {
@@ -29,26 +29,25 @@ export async function middleware(request: NextRequest) {
   }
 
   // if user role have based route
-  if (
-    (user as IUser)?.role &&
-    RoleBasedRoutes[(user as IUser)?.role as TRole]
-  ) {
-    const routes = RoleBasedRoutes[(user as IUser)?.role as TRole];
-    console.log(routes);
+  if (user?.role && RoleBasedRoutes[user.role as TRole]) {
+    const routes = RoleBasedRoutes[user.role as TRole];
     if (routes.some((route) => pathname.match(route))) {
       return NextResponse.next();
     }
   }
 
+  // If the user is not authorized for the current route, redirect to home
   return NextResponse.redirect(new URL("/", request.url));
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    // "/profile",
-    // "/profile/:page*",
+    "/user",
+    "/myprofile",
+    "/user/:page*",
     "/admin",
+    "/admin/:page*",
     "/auth/login",
     "/auth/register",
   ],

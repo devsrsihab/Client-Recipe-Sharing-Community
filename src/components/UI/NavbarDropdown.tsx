@@ -14,7 +14,7 @@ import { protectedRoutes } from "@/src/constant";
 
 const NavbarDropdown = () => {
   const router = useRouter();
-  const { setIsLoading: userLoading } = useUser();
+  const { user, setIsLoading: userLoading } = useUser();
   const pathName = usePathname();
 
   // hanlde navigation
@@ -35,22 +35,14 @@ const NavbarDropdown = () => {
         <Avatar className="cursor-pointer" name="Sohan" />
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions">
-        <DropdownItem onClick={() => handleNavigation("/admin/dashboard")}>
-          Admin Dashboard
-        </DropdownItem>
-        <DropdownItem onClick={() => handleNavigation("/user/dashboard")}>
-          User Dashboard
-        </DropdownItem>
         <DropdownItem
-          onClick={() => handleNavigation("/profile/claim-requests")}
+          onClick={() =>
+            user?.role === "admin"
+              ? handleNavigation("/admin/dashboard")
+              : handleNavigation("/user/dashboard")
+          }
         >
-          Claim Request
-        </DropdownItem>
-        <DropdownItem onClick={() => handleNavigation("/profile/create-post")}>
-          Create Post
-        </DropdownItem>
-        <DropdownItem onClick={() => handleNavigation("/settings")}>
-          Settings
+          Dashboard
         </DropdownItem>
         <DropdownItem
           onClick={() => handleUserLogout()}

@@ -56,6 +56,7 @@ export const getCurrentuser = async () => {
       profilePicture: decodedToken?.profilePicture,
     };
   }
+
   return decodedToken;
 };
 

@@ -12,6 +12,16 @@ export const updateUserProfile = async (data: any) => {
   }
 };
 
+// get user single info
+export const getUserSingleInfo = async () => {
+  try {
+    const response = await axiosInstance.get("/users/profile");
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
 // follower list of user
 export const getFollowerList = async () => {
   try {
