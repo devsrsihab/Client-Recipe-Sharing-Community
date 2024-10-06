@@ -7,7 +7,7 @@ import {
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
-// update user profile
+//DONE update user profile
 export const useUpdateUserProfileMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<any, Error, FieldValues>({

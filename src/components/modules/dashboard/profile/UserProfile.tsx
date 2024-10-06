@@ -118,18 +118,32 @@ const UserProfile = () => {
                 Joined {new Date(user?.createdAt).toLocaleDateString()}
               </span>
             </div>
-            <div className="flex items-center">
+            <Link
+              href={
+                user?.role === "admin"
+                  ? "/admin/profile/followers"
+                  : "/user/profile/followers"
+              }
+              className="flex items-center"
+            >
               <UserGroupIcon className="h-6 w-6 text-gray-500 mr-3" />
               <span className="text-gray-700 dark:text-gray-300">
-                {user?.followers.length} Followers
+                {user?.followers.length} Following
               </span>
-            </div>
-            <div className="flex items-center">
+            </Link>
+            <Link
+              href={
+                user?.role === "admin"
+                  ? "/admin/profile/followings"
+                  : "/user/profile/followings"
+              }
+              className="flex items-center"
+            >
               <UserPlusIcon className="h-6 w-6 text-gray-500 mr-3" />
               <span className="text-gray-700 dark:text-gray-300">
                 {user?.following.length} Following
               </span>
-            </div>
+            </Link>
           </div>
 
           <div className="mt-8">
