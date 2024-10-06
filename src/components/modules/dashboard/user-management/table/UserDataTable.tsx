@@ -13,13 +13,44 @@ import {
 import React, { useMemo, useState } from "react";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
-import { IUser } from "@/src/types";
 import { userRenderCell } from "./UserTableColumn";
 import { useGetAllUsers } from "@/src/hooks/user.hook";
+import { IUser } from "@/src/types/post.type";
+import { Input } from "@nextui-org/input";
+import { SearchIcon } from "@/src/components/icons";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { ChevronDownIcon, CheckIcon } from "@heroicons/react/24/outline";
+
+// Define a styled component for the DropdownItem
+const StyledDropdownItem = {
+  "& span#react-aria5330686555-\\:r36\\: svg": {
+    display: "none",
+  },
+  "& span#react-aria5330686555-\\:r39\\: svg": {
+    display: "none",
+  },
+  "& span#react-aria5330686555-\\:r3c\\: svg": {
+    display: "none",
+  },
+};
 
 const UserDataTable = () => {
   const { data, isLoading } = useGetAllUsers();
   const [page, setPage] = useState(1);
+  const [filterValue, setFilterValue] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+
+  const statusColorMap: Record<string, any> = {
+    active: "success",
+    paused: "danger",
+    vacation: "warning",
+  };
 
   const users = data?.data;
   const rowsPerPage = 5;
@@ -33,20 +64,126 @@ const UserDataTable = () => {
     return users?.slice(start, end);
   }, [page, users]);
 
-  return (
-    <div className="relative">
-      <Table
-        aria-label="Recipe table with pagination"
-        // heading content
-        topContent={
+  const onClear = React.useCallback(() => {
+    setFilterValue("");
+    setPage(1);
+  }, []);
+
+  const onSearchChange = React.useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const hasSearchFilter = Boolean(filterValue);
+
+  const statusOptions = [
+    { name: "All", id: "all" },
+    { name: "Active", id: "active" },
+    { name: "Pending", id: "pending" },
+    { name: "Blocked", id: "blocked" },
+  ];
+
+  // filter
+  const filteredItems = React.useMemo(() => {
+    let filteredUsers = [...(users || [])];
+
+    if (hasSearchFilter) {
+      filteredUsers = filteredUsers.filter(
+        (user: IUser) =>
+          user.name.firstName
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          user.email.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== "all") {
+      filteredUsers = filteredUsers.filter(
+        (user: IUser) =>
+          statusFilter?.split(",").includes(user?.status as string) ?? false
+      );
+    }
+
+    return filteredUsers;
+  }, [users, filterValue, statusFilter, hasSearchFilter]);
+
+  // ============Top content============
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by name..."
+            startContent={<SearchIcon />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button variant="flat" className="capitalize">
+                  Status
+                  <ChevronDownIcon className="w-4 h-4 ml-2" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={new Set(statusFilter.split(","))}
+                selectionMode="multiple"
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys);
+                  setStatusFilter(selected.join(","));
+                  setSelectedStatus(selected.join(","));
+                }}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.id} className="capitalize">
+                    <span>{status.name}</span>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
           <div className="flex justify-end">
             <Button>
               <Link href="/admin/user-management/create">Add User</Link>
             </Button>
           </div>
-        }
+        </div>
+      </div>
+    );
+  }, [
+    filterValue,
+    statusFilter,
+    onSearchChange,
+    users?.length,
+    hasSearchFilter,
+  ]);
+
+  return (
+    <div className="relative">
+      <Table
+        aria-label="Recipe table with pagination"
+        // heading content
+        // topContent={
+        //   <div className="flex justify-end">
+        //     <Button>
+        //       <Link href="/admin/user-management/create">Add User</Link>
+        //     </Button>
+        //   </div>
+        // }
+        topContent={topContent}
         bottomContent={
-          users?.length > 0 ? (
+          filteredItems.length > 0 ? (
             <div className="flex w-full justify-center">
               <Pagination
                 isCompact
@@ -54,7 +191,7 @@ const UserDataTable = () => {
                 showShadow
                 color="primary"
                 page={page}
-                total={pages}
+                total={Math.ceil(filteredItems.length / rowsPerPage)}
                 onChange={(page) => setPage(page)}
               />
             </div>
@@ -70,7 +207,10 @@ const UserDataTable = () => {
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody
-          items={slicesUsers ?? []}
+          items={filteredItems.slice(
+            (page - 1) * rowsPerPage,
+            page * rowsPerPage
+          )}
           isLoading={isLoading}
           loadingContent={<Spinner label="Loading..." />}
           emptyContent={"No users found"}

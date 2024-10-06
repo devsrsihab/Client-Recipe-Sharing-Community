@@ -1,11 +1,11 @@
 "use client";
 
 import UserDeleteModal from "@/src/components/modal/UserDeleteModal";
-import { IUser } from "@/src/types";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Image } from "@nextui-org/image";
 import Link from "next/link";
 import FXDropRoleAndStatusChange from "../FXDropRoleAndStatusChange";
+import { IUser } from "@/src/types/post.type";
 
 export const userRenderCell = (user: IUser, columnKey: React.Key) => {
   const cellValue = user[columnKey as keyof IUser];

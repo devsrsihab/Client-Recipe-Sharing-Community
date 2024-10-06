@@ -56,7 +56,6 @@ const EditProfilePage = () => {
 
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log("Form data:", data); // Log the entire form data
     let profilePictureUrl = userSingle?.profilePicture;
     if (imageFile) {
       profilePictureUrl = await cloudinaryUpload(imageFile);
@@ -70,7 +69,6 @@ const EditProfilePage = () => {
       profilePicture: profilePictureUrl || "",
       bio: data.bio, // Ensure this matches the name in your form
     };
-    console.log("User data to be sent:", userData);
 
     handleUpdateUser(userData);
   };

@@ -16,37 +16,125 @@ import React, { useMemo, useState } from "react";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import { renderCell } from "./TableColumn";
+import { Input } from "@nextui-org/input";
+import { SearchIcon } from "@/src/components/icons";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const RecipeDataTable = () => {
   const { data, isLoading } = useGetRecipes();
   const [page, setPage] = useState(1);
+  const [filterValue, setFilterValue] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState<string>("all");
 
   const recipes = data?.data;
   const rowsPerPage = 5;
 
-  const pages = Math.ceil(recipes?.length / rowsPerPage);
+  const onClear = React.useCallback(() => {
+    setFilterValue("");
+    setPage(1);
+  }, []);
 
-  const slicesRecipes = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+  const onSearchChange = React.useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
 
-    return recipes?.slice(start, end);
-  }, [page, recipes]);
+  const hasSearchFilter = Boolean(filterValue);
 
-  return (
-    <div className="relative">
-      <Table
-        aria-label="Recipe table with pagination"
-        // heading content
-        topContent={
+  const statusOptions = [
+    { name: "All", id: "all" },
+    { name: "Pending", id: "pending" },
+    { name: "Published", id: "published" },
+    { name: "Unpublished", id: "unpublished" },
+    { name: "Private", id: "private" },
+  ];
+
+  const filteredItems = React.useMemo(() => {
+    let filteredRecipes = [...(recipes || [])];
+
+    if (hasSearchFilter) {
+      filteredRecipes = filteredRecipes.filter((recipe: IRecipe) =>
+        recipe.title.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== "all") {
+      filteredRecipes = filteredRecipes.filter(
+        (recipe: IRecipe) =>
+          statusFilter?.split(",").includes(recipe?.status as string) ?? false
+      );
+    }
+
+    return filteredRecipes;
+  }, [recipes, filterValue, statusFilter, hasSearchFilter]);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by title..."
+            startContent={<SearchIcon />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button variant="flat" className="capitalize">
+                  Status
+                  <ChevronDownIcon className="w-4 h-4 ml-2" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={new Set(statusFilter.split(","))}
+                selectionMode="multiple"
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys);
+                  setStatusFilter(selected.join(","));
+                }}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.id} className="capitalize">
+                    <span>{status.name}</span>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
           <div className="flex justify-end">
             <Button>
               <Link href="/admin/recipe-managment/create">Add Recipe</Link>
             </Button>
           </div>
-        }
+        </div>
+      </div>
+    );
+  }, [filterValue, statusFilter, onSearchChange, onClear]);
+
+  return (
+    <div className="relative">
+      <Table
+        aria-label="Recipe table with pagination"
+        topContent={topContent}
         bottomContent={
-          recipes?.length > 0 ? (
+          filteredItems.length > 0 ? (
             <div className="flex w-full justify-center">
               <Pagination
                 isCompact
@@ -54,7 +142,7 @@ const RecipeDataTable = () => {
                 showShadow
                 color="primary"
                 page={page}
-                total={pages}
+                total={Math.ceil(filteredItems.length / rowsPerPage)}
                 onChange={(page) => setPage(page)}
               />
             </div>
@@ -69,7 +157,10 @@ const RecipeDataTable = () => {
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody
-          items={slicesRecipes ?? []}
+          items={filteredItems.slice(
+            (page - 1) * rowsPerPage,
+            page * rowsPerPage
+          )}
           isLoading={isLoading}
           loadingContent={<Spinner label="Loading..." />}
           emptyContent={"No recipes found"}
