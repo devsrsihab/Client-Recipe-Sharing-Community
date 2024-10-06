@@ -21,9 +21,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <SidebarMenu
-        navigation={
-          userTest?.role === "admin" ? adminNavigation : userNavigation
-        }
+        navigation={user?.role === "admin" ? adminNavigation : userNavigation}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />

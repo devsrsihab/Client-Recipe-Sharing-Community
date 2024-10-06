@@ -17,7 +17,6 @@ import { usePathname } from "next/navigation";
 
 import Link from "next/link";
 import { IMenu } from "@/src/types/sidebarMenu.type";
-import { userTest } from "./menuConstant";
 import { useUser } from "@/src/context/user.provider";
 
 function classNames(...classes: string[]) {
