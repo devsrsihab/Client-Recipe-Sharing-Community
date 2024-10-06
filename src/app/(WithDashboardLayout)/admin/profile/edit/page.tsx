@@ -2,8 +2,10 @@
 
 import FXInput from "@/src/components/Form/FXInput";
 import { useUser } from "@/src/context/user.provider";
+import { useChangePasswordMutation } from "@/src/hooks/auth.hook";
 import { useGetUserById } from "@/src/hooks/user.hook";
 import { useUpdateUserProfileMutation } from "@/src/hooks/userProfile.hook";
+import { passwordChangeSchema } from "@/src/schemas/passwordChange.schema";
 import { updateUserSchema } from "@/src/schemas/user.schem";
 import { IUser } from "@/src/types/post.type";
 
@@ -37,9 +39,15 @@ const EditProfilePage = () => {
   const { mutate: handleUpdateUser, isPending: userPending } =
     useUpdateUserProfileMutation();
 
-  // define methods
+  const { mutate: handleUpdatePassword, isPending: passwordUpdatePending } =
+    useChangePasswordMutation();
+
   const methods = useForm({
     resolver: zodResolver(updateUserSchema),
+  });
+
+  const passwordMethods = useForm({
+    resolver: zodResolver(passwordChangeSchema),
   });
 
   // destructure methods needed object
@@ -63,6 +71,13 @@ const EditProfilePage = () => {
     console.log(userData);
 
     handleUpdateUser(userData);
+  };
+
+  const onPasswordSubmit: SubmitHandler<FieldValues> = (data) => {
+    handleUpdatePassword({
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
+    });
   };
 
   // handle image change
@@ -108,8 +123,10 @@ const EditProfilePage = () => {
 
   return (
     <div className="h-full rounded-xl bg-gradient-to-b from-default-100 px-20 py-12">
-      <h1 className="text-2xl font-semibold">Update User</h1>
+      <h1 className="text-2xl font-semibold">Profile Update</h1>
       <Divider className="my-5" />
+
+      {/* Existing profile update form */}
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* firstName and lastName */}
@@ -172,6 +189,49 @@ const EditProfilePage = () => {
             type="submit"
           >
             Update
+          </Button>
+        </form>
+      </FormProvider>
+
+      {/* New password change form */}
+      <Divider className="my-10" />
+      <h2 className="text-2xl font-semibold mb-5">Change Password</h2>
+      <FormProvider {...passwordMethods}>
+        <form
+          onSubmit={passwordMethods.handleSubmit(onPasswordSubmit)}
+          className="space-y-4"
+        >
+          <div className="flex flex-wrap gap-4">
+            <div className="min-w-fit flex-1">
+              <FXInput
+                type="password"
+                name="oldPassword"
+                label="Current Password"
+              />
+            </div>
+            <div className="min-w-fit flex-1">
+              <FXInput
+                type="password"
+                name="newPassword"
+                label="New Password"
+              />
+            </div>
+            <div>
+              <FXInput
+                type="password"
+                name="confirmNewPassword"
+                label="Confirm New Password"
+              />
+            </div>
+          </div>
+
+          <Button
+            isLoading={passwordUpdatePending}
+            className="mt-5"
+            radius="none"
+            type="submit"
+          >
+            Change Password
           </Button>
         </form>
       </FormProvider>

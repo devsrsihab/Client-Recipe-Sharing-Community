@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
 
+// register user service
 export const registerUser = async (userData: FieldValues) => {
   try {
     const { data } = await axiosInstance.post("/auth/register", userData);
@@ -71,7 +72,20 @@ export const getNewAccessToken = async () => {
       },
     });
     return data;
-  } catch (error) {
-    throw new Error("Failed to refresh token");
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+// password change service
+export const changePassword = async (changeData: FieldValues) => {
+  try {
+    const { data } = await axiosInstance.post(
+      "/auth/change-password",
+      changeData
+    );
+    return data;
+  } catch (error: any) {
+    throw new Error(error);
   }
 };

@@ -7,9 +7,8 @@ export const getRecipes = async () => {
   try {
     const res = await axiosInstance.get("/recipes");
     return res.data;
-  } catch (error) {
-    console.error("Failed to fetch data:", error);
-    throw new Error("Failed to fetch data");
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
@@ -18,9 +17,8 @@ export const createRecipe = async (recipeData: Partial<IRecipe>) => {
   try {
     const res = await axiosInstance.post("/recipes", recipeData);
     return res.data;
-  } catch (error) {
-    console.error("Failed to create recipe:", error);
-    throw new Error("Failed to create recipe");
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
@@ -29,9 +27,8 @@ export const getRecipeDetails = async (recipeId: string) => {
   try {
     const res = await axiosInstance.get(`/recipes/${recipeId}`);
     return res.data;
-  } catch (error) {
-    console.error("Failed to fetch recipe details:", error);
-    throw new Error("Failed to fetch recipe details");
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
@@ -43,9 +40,8 @@ export const updateRecipe = async (
   try {
     const res = await axiosInstance.put(`/recipes/${recipeId}`, recipeData);
     return res.data;
-  } catch (error) {
-    console.error("Failed to update recipe:", error);
-    throw new Error("Failed to update recipe");
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
@@ -54,8 +50,7 @@ export const deleteRecipe = async (recipeId: string) => {
   try {
     const res = await axiosInstance.delete(`/recipes/${recipeId}`);
     return res.data;
-  } catch (error) {
-    console.error("Failed to delete recipe:", error);
-    throw new Error("Failed to delete recipe");
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
