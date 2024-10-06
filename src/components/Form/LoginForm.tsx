@@ -47,7 +47,7 @@ const LoginForm = () => {
               href="#"
               className="flex items-center mb-6 text-2xl font-semibold text-orange-400"
             >
-              Foundx
+              SRS RecipeX
             </a>
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-6">
               Sign in to your account

@@ -14,12 +14,36 @@ import Link from "next/link";
 import { ThemeSwitch } from "../../theme-switch";
 import { logOutUser } from "@/src/services/AuthService";
 import { useUser } from "@/src/context/user.provider";
+import { useRouter } from "next/navigation";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user } = useUser();
+  const router = useRouter();
+
+  // handle logout
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logOutUser();
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Optionally, you can show an error message to the user here
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <>
+      {isLoggingOut && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+        </div>
+      )}
+
       <SidebarMenu
         navigation={user?.role === "admin" ? adminNavigation : userNavigation}
         sidebarOpen={sidebarOpen}
@@ -96,9 +120,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                     </MenuItem>
                     <MenuItem key="logout">
                       <a
-                        onClick={() => {
-                          logOutUser();
-                        }}
+                        onClick={handleLogout}
                         className="dark:text-white dark:hover:bg-gray-700 cursor-pointer block px-3 py-1 text-sm leading-6 text-gray-900 "
                       >
                         Logout
