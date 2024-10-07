@@ -15,7 +15,7 @@ import {
 import React, { useMemo, useState } from "react";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
-import { renderCell } from "./TableColumn";
+import { renderCell } from "./UserTableColumn";
 import { Input } from "@nextui-org/input";
 import { SearchIcon } from "@/src/components/icons";
 import {
@@ -25,10 +25,8 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { useUser } from "@/src/context/user.provider";
 
-const RecipeDataTable = () => {
-  const { user: currentUser } = useUser();
+const UserRecipeDataTable = () => {
   const { data, isLoading } = useGetRecipes();
   const [page, setPage] = useState(1);
   const [filterValue, setFilterValue] = React.useState("");
@@ -121,17 +119,9 @@ const RecipeDataTable = () => {
             </Dropdown>
           </div>
           <div className="flex justify-end">
-            {currentUser?.role === "admin" && (
-              <Button>
-                <Link href="/admin/recipe-managment/create">Add Recipe</Link>
-              </Button>
-            )}
-
-            {currentUser?.role === "user" && (
-              <Button>
-                <Link href="/user/recipe/create">Add Recipe</Link>
-              </Button>
-            )}
+            <Button>
+              <Link href="/user/recipe-managment/create">Add Recipe</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -188,4 +178,4 @@ const RecipeDataTable = () => {
   );
 };
 
-export default RecipeDataTable;
+export default UserRecipeDataTable;

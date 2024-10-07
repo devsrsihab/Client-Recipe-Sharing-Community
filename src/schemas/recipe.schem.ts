@@ -16,8 +16,8 @@ export const createRecipeSchema = z.object({
   category: z
     .string({ required_error: "Category is required" })
     .min(1, "Category is required"),
-  prepTime: z.number().min(1, "Prep time is required"),
-  cookTime: z.number().min(1, "Cook time is required"),
+  prepTime: z.string().min(1, "Prep time is required"),
+  cookTime: z.string().min(1, "Cook time is required"),
 });
 
 // Update schema: make all fields optional using .partial()

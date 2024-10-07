@@ -73,14 +73,14 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
       return (
         <div className="relative flex items-center gap-4">
           <Link
-            href={`/admin/recipe-managment/view/${recipe._id}`}
+            href={`/user/recipe/view/${recipe._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <EyeIcon className="size-5" />
           </Link>
 
           <Link
-            href={`/admin/recipe-managment/edit/${recipe._id}`}
+            href={`/user/recipe/edit/${recipe._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <PencilIcon className="size-5" />
