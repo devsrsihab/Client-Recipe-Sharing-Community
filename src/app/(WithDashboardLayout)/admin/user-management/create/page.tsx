@@ -6,7 +6,7 @@ import { USER_ROLE } from "@/src/constant";
 import { useUser } from "@/src/context/user.provider";
 import { useCreateUserMutation } from "@/src/hooks/user.hook";
 import { userCreateSchema } from "@/src/schemas/user.schem";
-import { IUser } from "@/src/types";
+import { IUser } from "@/src/types/post.type";
 import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 
 import { zodResolver } from "@hookform/resolvers/zod";

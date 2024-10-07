@@ -54,3 +54,23 @@ export const deleteRecipe = async (recipeId: string) => {
     throw new Error(error);
   }
 };
+
+// upvote recipe
+export const upvoteRecipe = async (recipeId: string) => {
+  try {
+    const res = await axiosInstance.post(`/recipes/${recipeId}/upvote`);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+// downvote recipe
+export const downvoteRecipe = async (recipeId: string) => {
+  try {
+    const res = await axiosInstance.post(`/recipes/${recipeId}/downvote`);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
