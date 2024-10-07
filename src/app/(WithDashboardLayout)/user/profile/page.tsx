@@ -1,5 +1,7 @@
-const UserProfilePage = () => {
-  return <div>User Profile Page</div>;
+import UserProfile from "@/src/components/modules/dashboard/profile/UserProfile";
+
+const AdminProfilePage = () => {
+  return <UserProfile />;
 };
 
-export default UserProfilePage;
+export default AdminProfilePage;

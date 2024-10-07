@@ -2,6 +2,7 @@
 
 import { useUser } from "@/src/context/user.provider";
 import { useGetUserById } from "@/src/hooks/user.hook";
+import { useGetUserSingleInfo } from "@/src/hooks/userProfile.hook";
 import {
   UserIcon,
   EnvelopeIcon,
@@ -22,10 +23,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const UserProfile = () => {
-  const { user: currentUser } = useUser();
-  const { data, isLoading, isError } = useGetUserById(
-    currentUser?._id as string
-  );
+  const { data, isLoading, isError } = useGetUserSingleInfo();
 
   const user = data?.data;
 
