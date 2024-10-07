@@ -5,8 +5,10 @@ import {
   createRecipe,
   deleteRecipe,
   downvoteRecipe,
+  getRecipeComments,
   getRecipeDetails,
   getRecipes,
+  makeRecipeComment,
   updateRecipe,
   upvoteRecipe,
 } from "../services/Recipes";

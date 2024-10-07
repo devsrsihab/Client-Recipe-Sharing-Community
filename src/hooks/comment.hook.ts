@@ -6,6 +6,8 @@ import {
 } from "../services/Comments";
 import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
+import { getRecipeComments, makeRecipeComment } from "../services/Recipes";
+import { keepPreviousData } from "@tanstack/react-query";
 
 // get all comments
 export const useGetAllComments = () => {
@@ -33,7 +35,7 @@ export const useUpdateCommentStatus = () => {
   });
 };
 
-// TODO. delete comment
+//  delete comment
 export const useDeleteComment = () => {
   const queryClient = useQueryClient();
 
@@ -47,5 +49,50 @@ export const useDeleteComment = () => {
     onError: (error) => {
       toast.error(error.message);
     },
+  });
+};
+
+// make recipe comment
+export const useMakeRecipeCommentMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, Error, FieldValues>({
+    mutationKey: ["MAKE_RECIPE_COMMENT"],
+    mutationFn: async ({ recipeId, comment }) =>
+      await makeRecipeComment(recipeId, comment),
+    onSuccess: (_, { recipeId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECIPE_DETAILS", recipeId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECIPE_COMMENTS", recipeId],
+      });
+      toast.success("Comment Successfully Added");
+    },
+    onError: (error) => toast.error(error.message.replace("Error: ", "")),
+  });
+};
+
+// get recipe comments
+export const useGetRecipeComments = (
+  recipeId: string,
+  page: number = 1,
+  limit: number = 5
+) => {
+  return useQuery({
+    queryKey: ["GET_RECIPE_COMMENTS", recipeId, page, limit],
+    queryFn: async () => {
+      const response = await getRecipeComments(recipeId, page, limit);
+      return {
+        comments: response.data,
+        meta: response.meta,
+      };
+    },
+    select: (data) => ({
+      comments: data.comments,
+      meta: data.meta,
+    }),
+    placeholderData: keepPreviousData,
+    staleTime: 5000,
   });
 };

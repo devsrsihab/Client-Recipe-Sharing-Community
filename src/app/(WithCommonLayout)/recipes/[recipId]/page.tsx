@@ -18,6 +18,15 @@ import {
   StarIcon,
 } from "@heroicons/react/24/outline";
 import { StarIcon as FilledStarIcon } from "@heroicons/react/20/solid";
+import FXForm from "@/src/components/Form/FXForm";
+import { useForm } from "react-hook-form";
+import { createCommentSchema } from "@/src/schemas/comment.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FXTextArea from "@/src/components/Form/FXTextArea";
+import {
+  useGetRecipeComments,
+  useMakeRecipeCommentMutation,
+} from "@/src/hooks/comment.hook";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -45,8 +54,21 @@ export default function RecipeDetails({
 }) {
   const { recipId } = params;
   const { data, isLoading, isError } = useGetRecipeDetails(recipId);
+  const {
+    mutate: handleMakeRecipeComment,
+    isPending: isMakeRecipeCommentLoading,
+    isSuccess: isMakeRecipeCommentSuccess,
+  } = useMakeRecipeCommentMutation();
   const { user } = useUser();
   const recipe = data?.data;
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: commentsData, isLoading: isCommentsLoading } =
+    useGetRecipeComments(recipId, currentPage);
+  const comments = commentsData?.comments;
+  const commentsMeta = commentsData?.meta;
+
+  console.log("Comments Data:", commentsMeta); // Add this line for debugging
 
   const { mutate: upvoteRecipe, isPending: isUpvoteLoading } =
     useUpvoteRecipeMutation();
@@ -66,17 +88,14 @@ export default function RecipeDetails({
   };
 
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
 
   const handleRatingSubmit = () => {
-    // TODO: Implement rating submission logic
     console.log({ rating });
   };
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement comment submission logic
-    console.log({ comment });
+  const handleCommentSubmit = (data: any) => {
+    console.log({ recipeId: recipId, comment: data.comment });
+    handleMakeRecipeComment({ recipeId: recipId, comment: data.comment });
   };
 
   if (isLoading)
@@ -302,128 +321,130 @@ export default function RecipeDetails({
 
           <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Add Your Comment</h3>
-            <form onSubmit={handleCommentSubmit} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="comment"
-                  className="block text-sm font-medium mb-1"
-                >
-                  Your Comment
-                </label>
-                <textarea
-                  id="comment"
-                  rows={4}
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Share your thoughts about this recipe..."
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            <div className="space-y-4">
+              <FXForm
+                isReset={isMakeRecipeCommentSuccess}
+                onSubmit={handleCommentSubmit}
+                resolver={zodResolver(createCommentSchema)}
               >
-                Submit Comment
-              </button>
-            </form>
+                <div>
+                  <FXTextArea name="comment" label="Your Comment" />
+                </div>
+                <Button isLoading={isMakeRecipeCommentLoading} type="submit">
+                  Submit Comment
+                </Button>
+              </FXForm>
+            </div>
           </div>
 
           {/* Ratings and comments list */}
           <div className="mt-12">
             <h3 className="text-xl font-semibold mb-6">User Reviews</h3>
-            <div className="space-y-8">
-              {/* This is a placeholder. You would map over actual ratings and comments here */}
-              {[1, 2, 3].map((review) => (
-                <div
-                  key={review}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
-                >
-                  <div className="flex items-start space-x-4">
-                    <img
-                      className="h-12 w-12 rounded-full"
-                      src={`https://randomuser.me/api/portraits/men/${review}.jpg`}
-                      alt="User avatar"
-                    />
-                    <div className="flex-grow">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-lg">John Doe</h4>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {format(new Date(), "MMMM d, yyyy")}
-                        </span>
-                      </div>
-                      <div className="flex items-center mt-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FilledStarIcon
-                            key={star}
-                            className={`h-5 w-5 flex-shrink-0 ${
-                              star <= 4
-                                ? "text-yellow-400"
-                                : "text-gray-300 dark:text-gray-600"
-                            }`}
-                          />
-                        ))}
-                        <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                          4.0
-                        </span>
-                      </div>
-                      <p className="mt-3 text-gray-700 dark:text-gray-300">
-                        This recipe was amazing! I loved how easy it was to
-                        follow the instructions, and the result was delicious.
-                        The flavors were perfectly balanced, and it was a hit
-                        with my family. I'll definitely be making this again
-                        soon.
-                      </p>
-                      <div className="mt-4 flex items-center space-x-4">
-                        <button className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150">
-                          <HandThumbUpIcon className="h-4 w-4 mr-1" />
-                          Helpful (15)
-                        </button>
-                        <button className="flex items-center text-sm text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150">
-                          <FlagIcon className="h-4 w-4 mr-1" />
-                          Report
-                        </button>
+            {isCommentsLoading ? (
+              <div className="text-center">Loading comments...</div>
+            ) : comments && comments.length > 0 ? (
+              <div className="space-y-8">
+                {comments.map((comment: any) => (
+                  <div
+                    key={comment._id}
+                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <img
+                        className="h-12 w-12 rounded-full object-cover"
+                        src={
+                          comment.user.profilePicture ||
+                          `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            comment.user.name.firstName +
+                              " " +
+                              comment.user.name.lastName
+                          )}&background=random`
+                        }
+                        alt={`${comment.user.name.firstName} ${comment.user.name.lastName}`}
+                      />
+                      <div className="flex-grow">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-lg capitalize">
+                            {`${comment.user.name.firstName} ${comment.user.name.lastName}`}
+                          </h4>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {format(
+                              new Date(comment.createdAt),
+                              "MMMM d, yyyy"
+                            )}
+                          </span>
+                        </div>
+                        {/* Note: Rating is not provided in the comment data, so we'll omit it for now */}
+                        <p className="mt-3 text-gray-700 dark:text-gray-300 capitalize">
+                          {comment.comment}
+                        </p>
+                        <div className="mt-4 flex items-center space-x-4">
+                          <button className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150">
+                            <HandThumbUpIcon className="h-4 w-4 mr-1" />
+                            Helpful
+                          </button>
+                          <button className="flex items-center text-sm text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-150">
+                            <FlagIcon className="h-4 w-4 mr-1" />
+                            Report
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center">No comments yet.</div>
+            )}
           </div>
 
           {/* Pagination */}
-          <div className="mt-12 flex justify-center">
-            <nav
-              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-              aria-label="Pagination"
-            >
-              <a
-                href="#"
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700"
+          {commentsMeta && commentsMeta.totalPage > 1 && (
+            <div className="mt-12 flex justify-center">
+              <nav
+                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
               >
-                Previous
-              </a>
-              {[1, 2, 3].map((page) => (
-                <a
-                  key={page}
-                  href="#"
-                  className={`relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium
-                    ${
-                      page === 2
-                        ? "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300"
-                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
                 >
-                  {page}
-                </a>
-              ))}
-              <a
-                href="#"
-                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                Next
-              </a>
-            </nav>
-          </div>
+                  Previous
+                </button>
+                {Array.from(
+                  { length: commentsMeta.totalPage },
+                  (_, i) => i + 1
+                ).map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className={`relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium
+                      ${
+                        currentPage === pageNumber
+                          ? "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300"
+                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, commentsMeta.totalPage)
+                    )
+                  }
+                  disabled={currentPage === commentsMeta.totalPage}
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </nav>
+            </div>
+          )}
         </div>
       </div>
     </div>

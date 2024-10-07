@@ -74,3 +74,35 @@ export const downvoteRecipe = async (recipeId: string) => {
     throw new Error(error);
   }
 };
+
+// make recipe comment
+export const makeRecipeComment = async (recipeId: string, comment: string) => {
+  try {
+    const res = await axiosInstance.post(`/comments`, {
+      recipeId,
+      comment,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+// get recipe comments
+export const getRecipeComments = async (
+  recipeId: string,
+  page: number = 1,
+  limit: number = 10
+) => {
+  try {
+    const res = await axiosInstance.get(`/comments/recipe/${recipeId}`, {
+      params: { page, limit },
+    });
+    return {
+      data: res.data.data,
+      meta: res.data.meta,
+    };
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
