@@ -1,5 +1,7 @@
 # Recipe Sharing Community - Client Side
 
+**Live Demo:** [https://client-recipe-community.vercel.app/](https://client-recipe-community.vercel.app/)
+
 ## Project Overview
 
 The **Recipe Sharing Community** is a full-stack web application that allows cooking enthusiasts to share, discover, and organize recipes. This project focuses on the client-side development using **Next.js**, **Redux**, and **TypeScript**.
