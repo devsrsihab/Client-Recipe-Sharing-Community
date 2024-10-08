@@ -70,7 +70,3 @@ To get started with the project, follow these steps:
    ```bash
    npm run dev
    ```
-
-The application should now be running on `http://localhost:3000`.
-
-// ... rest of the README content ...
