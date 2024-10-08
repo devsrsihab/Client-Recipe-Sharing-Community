@@ -63,7 +63,7 @@ const CommentDataTable = () => {
       >
         <TableHeader>
           <TableColumn key="name">Name</TableColumn>
-          <TableColumn key="text">Comment</TableColumn>
+          <TableColumn key="comment">Comment</TableColumn>
           <TableColumn key="recipe">Recipe</TableColumn>
           <TableColumn key="status">Status</TableColumn>
           <TableColumn key="actions">Actions</TableColumn>

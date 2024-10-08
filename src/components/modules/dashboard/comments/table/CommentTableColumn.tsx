@@ -1,9 +1,7 @@
 "use client";
 
-import UserDeleteModal from "@/src/components/modal/UserDeleteModal";
 import { IComment } from "@/src/types";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
+import { TrashIcon } from "@heroicons/react/20/solid";
 import FXCommentStatusChange from "../FXCommentStatusChange";
 import CommentDeleteModal from "@/src/components/modal/CommentDeleteModal";
 
@@ -26,7 +24,7 @@ export const commentRenderCell = (comment: IComment, columnKey: React.Key) => {
         </>
       );
 
-    case "text":
+    case "comment":
       return (
         <div className="max-w-[240px]">
           {" "}

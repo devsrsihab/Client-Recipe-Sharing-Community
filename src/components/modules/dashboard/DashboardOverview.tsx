@@ -1,14 +1,17 @@
 "use client";
 
+import { useUser } from "@/src/context/user.provider";
 import { useGetUserSingleInfo } from "@/src/hooks/userProfile.hook";
 import { Avatar } from "@nextui-org/avatar";
 
 const DashboardOverview = () => {
+  const { user } = useUser();
+
   const {
     data,
     isLoading: isSingleUserLoading,
     isError: isSingleUserError,
-  } = useGetUserSingleInfo();
+  } = useGetUserSingleInfo(user?._id as string);
 
   const userData = data?.data;
 

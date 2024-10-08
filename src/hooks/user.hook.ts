@@ -15,11 +15,7 @@ import {
 } from "../services/UserService";
 import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
-import {
-  followUser,
-  getUserRecipes,
-  unfollowUser,
-} from "../services/UserProfile";
+import { getUserRecipes } from "../services/UserProfile";
 
 //  get all users
 export const useGetAllUsers = () => {

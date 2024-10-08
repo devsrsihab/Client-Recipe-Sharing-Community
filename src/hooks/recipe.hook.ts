@@ -5,13 +5,21 @@ import {
   createRecipe,
   deleteRecipe,
   downvoteRecipe,
-  getRecipeComments,
   getRecipeDetails,
+  getRecipeFeeds,
   getRecipes,
-  makeRecipeComment,
   updateRecipe,
   upvoteRecipe,
 } from "../services/Recipes";
+
+// get recipe feeds
+export const useGetRecipeFeeds = (page: number = 1, limit: number = 6) => {
+  return useQuery({
+    queryKey: ["GET_RECIPE_FEEDS"],
+    queryFn: async () => await getRecipeFeeds(page, limit),
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
+  });
+};
 
 // create recipes
 export const useCreateRecipeMutation = () => {
@@ -23,7 +31,7 @@ export const useCreateRecipeMutation = () => {
   });
 };
 
-// get all recipes
+// get all recipes based user createdBy
 export const useGetRecipes = () => {
   return useQuery({
     queryKey: ["GET_RECIPES"],

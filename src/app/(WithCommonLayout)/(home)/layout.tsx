@@ -1,16 +1,5 @@
-const Layout = ({
-  // children,
-  recipes,
-}: {
-  // children: React.ReactNode;
-  recipes: React.ReactNode;
-}) => {
-  return (
-    <>
-      {/* {children}  */}
-      {recipes}
-    </>
-  );
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
 };
 
 export default Layout;

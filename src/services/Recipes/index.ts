@@ -3,6 +3,19 @@
 import axiosInstance from "@/src/lib/AxiosInstance";
 import { IRecipe } from "@/src/types";
 
+// get recipe feeds
+export const getRecipeFeeds = async (page: number = 1, limit: number = 3) => {
+  try {
+    const res = await axiosInstance.get("/recipes/feeds", {
+      params: { page, limit },
+    });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+// get all recipes based user createdBy
 export const getRecipes = async () => {
   try {
     const res = await axiosInstance.get("/recipes");
