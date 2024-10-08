@@ -1,7 +1,6 @@
 "use client";
 
 import { useUser } from "@/src/context/user.provider";
-import { useGetUserById } from "@/src/hooks/user.hook";
 import { useGetUserSingleInfo } from "@/src/hooks/userProfile.hook";
 import {
   UserIcon,
@@ -23,7 +22,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const UserProfile = () => {
-  const { data, isLoading, isError } = useGetUserSingleInfo();
+  const { user: currentUser } = useUser();
+  const { data, isLoading, isError } = useGetUserSingleInfo(
+    currentUser?._id as string
+  );
 
   const user = data?.data;
 

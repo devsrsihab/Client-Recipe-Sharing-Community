@@ -1,7 +1,5 @@
 import CreateRecipe from "@/src/components/modules/dashboard/recipe/CreateRecipe";
 
-const AdminCreateRecipe = () => {
+export default function CreateRecipeAdmin() {
   return <CreateRecipe />;
-};
-
-export default AdminCreateRecipe;
+}

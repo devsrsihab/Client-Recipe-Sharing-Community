@@ -7,20 +7,32 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import {
-  Cog6ToothIcon,
   XMarkIcon,
   ChevronDownIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import React, { useState } from "react";
 import { usePathname } from "next/navigation";
+import { ComponentType, ReactElement } from "react";
 
 import Link from "next/link";
-import { IMenu } from "@/src/types/sidebarMenu.type";
 import { useUser } from "@/src/context/user.provider";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+interface IMenu {
+  icon?: ComponentType<{ className?: string }> | ReactElement | string;
+  name: string;
+  href: string;
+  children?: IMenu[];
+}
+
+function isValidReactComponent(
+  component: any
+): component is ComponentType<{ className?: string }> {
+  return typeof component === "function" || typeof component === "object";
 }
 
 const SidebarMenu = ({
@@ -34,10 +46,8 @@ const SidebarMenu = ({
 }) => {
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
   const pathname = usePathname();
-  // current suer
   const { user } = useUser();
 
-  // toggle dropdown
   const toggleDropdown = (name: string) => {
     setOpenDropdowns((prev) =>
       prev.includes(name)
@@ -46,12 +56,31 @@ const SidebarMenu = ({
     );
   };
 
-  // render navigation item
   const renderNavItem = (item: IMenu, depth = 0) => {
     const isOpen = openDropdowns.includes(item.name);
     const isActive =
       pathname === item.href ||
       (item.children && item.children.some((child) => pathname === child.href));
+
+    const renderIcon = () => {
+      if (!item.icon) return null;
+
+      if (isValidReactComponent(item.icon)) {
+        const IconComponent = item.icon as ComponentType<{
+          className?: any;
+        }>;
+        return (
+          <IconComponent className="h-6 w-6 shrink-0 mr-2" aria-hidden="true" />
+        );
+      } else if (React.isValidElement(item.icon)) {
+        return React.cloneElement(item.icon as any, {
+          className: "h-6 w-6 shrink-0 mr-2",
+          "aria-hidden": true,
+        });
+      }
+
+      return null;
+    };
 
     if (item.children) {
       return (
@@ -66,9 +95,7 @@ const SidebarMenu = ({
               "group flex w-full items-center rounded-md p-2 text-sm font-semibold leading-6"
             )}
           >
-            {item.icon && (
-              <item.icon aria-hidden="true" className="h-6 w-6 shrink-0 mr-2" />
-            )}
+            {renderIcon()}
             {item.name}
             <ChevronDownIcon
               className={classNames(
@@ -106,9 +133,7 @@ const SidebarMenu = ({
             "group flex items-center rounded-md p-2 text-sm font-semibold leading-6"
           )}
         >
-          {item.icon && (
-            <item.icon aria-hidden="true" className="h-6 w-6 shrink-0 mr-2" />
-          )}
+          {renderIcon()}
           {item.name}
         </Link>
       </li>
@@ -117,7 +142,6 @@ const SidebarMenu = ({
 
   return (
     <>
-      {/* 1. Mobile Sidebar with Backdrop */}
       <Dialog
         open={sidebarOpen}
         onClose={setSidebarOpen}
@@ -149,7 +173,6 @@ const SidebarMenu = ({
               </div>
             </TransitionChild>
 
-            {/* Sidebar component */}
             <div className="flex grow flex-col gap-y-5 overflow-y-auto dark:bg-gray-900 bg-white px-6 pb-4 ring-1 ring-white/10">
               <div className="flex h-16 shrink-0 items-center">
                 <Link href="/">
@@ -191,9 +214,7 @@ const SidebarMenu = ({
         </div>
       </Dialog>
 
-      {/* 2. Static Sidebar for Desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        {/* Sidebar component */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto dark:bg-gray-900 bg-white px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
             <Link href="/">

@@ -23,8 +23,8 @@ const FXTextArea = ({
 
   return (
     <Textarea
-      {...register(name)} // No need for `value: defaultValue` here
-      errorMessage={errors[name] ? (errors[name].message as string) : ""}
+      {...register(name)}
+      errorMessage={"Field is required"}
       isInvalid={!!errors[name]}
       minRows={6}
       required={required}

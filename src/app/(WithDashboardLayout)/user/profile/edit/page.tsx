@@ -28,11 +28,12 @@ const EditProfilePage = () => {
   // define state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { user } = useUser();
   const {
     data: userSingleData,
     isLoading: isSingleUserLoading,
     isError: isSingleUserError,
-  } = useGetUserSingleInfo();
+  } = useGetUserSingleInfo(user?._id as string);
 
   const userSingle = userSingleData?.data;
 
