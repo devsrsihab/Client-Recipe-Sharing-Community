@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   changeRole,
   changeStatus,
@@ -10,6 +15,11 @@ import {
 } from "../services/UserService";
 import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
+import {
+  followUser,
+  getUserRecipes,
+  unfollowUser,
+} from "../services/UserProfile";
 
 //  get all users
 export const useGetAllUsers = () => {
@@ -101,5 +111,29 @@ export const useUpdateUserByIdMutation = () => {
       toast.success("User Updated Successfully");
     },
     onError: (error) => toast.error(error.message),
+  });
+};
+
+// user recipes
+export const useGetRecipeComments = (
+  recipeId: string,
+  page: number = 1,
+  limit: number = 10
+) => {
+  return useQuery({
+    queryKey: ["USER_RECIPES", recipeId, page, limit],
+    queryFn: async () => {
+      const response = await getUserRecipes(recipeId);
+      return {
+        recipes: response.data,
+        meta: response.meta,
+      };
+    },
+    select: (data) => ({
+      recipes: data.recipes,
+      meta: data.meta,
+    }),
+    placeholderData: keepPreviousData,
+    staleTime: 5000,
   });
 };

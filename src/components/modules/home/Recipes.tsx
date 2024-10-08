@@ -29,7 +29,7 @@ const Recipes = ({ isCardHeader = true }: { isCardHeader?: boolean }) => {
           </p>
         </div>
       )}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 ">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3  ">
         {recipes?.map((recipe: IRecipe) => (
           <Card key={recipe._id} recipe={recipe} />
         ))}

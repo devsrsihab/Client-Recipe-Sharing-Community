@@ -30,6 +30,7 @@ import {
   useMakeRecipeRating,
 } from "@/src/hooks/comment.hook";
 import { toast } from "sonner";
+import Link from "next/link";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -198,6 +199,36 @@ export default function RecipeDetails({
             <h1 className="text-2xl capitalize sm:text-3xl font-bold tracking-tight mb-4">
               {recipe.title}
             </h1>
+
+            {/* Add creator information here */}
+            <div className="mb-6 flex items-center">
+              <Link
+                href={`/profile/${recipe.createdBy._id}`}
+                className="flex items-center group"
+              >
+                <img
+                  src={
+                    recipe.createdBy.profilePicture ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      recipe.createdBy.name.firstName +
+                        " " +
+                        recipe.createdBy.name.lastName
+                    )}&background=random`
+                  }
+                  alt={`${recipe.createdBy.name.firstName} ${recipe.createdBy.name.lastName}`}
+                  className="w-10 h-10 rounded-full mr-3"
+                />
+                <div>
+                  <p className="font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {recipe.createdBy.name.firstName}{" "}
+                    {recipe.createdBy.name.lastName}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                    {recipe.createdBy.role}
+                  </p>
+                </div>
+              </Link>
+            </div>
 
             <div className="mt-3 flex items-center">
               <div className="flex items-center">
