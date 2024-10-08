@@ -106,3 +106,26 @@ export const getRecipeComments = async (
     throw new Error(error);
   }
 };
+
+// make recipe rating
+export const makeRecipeRating = async (recipeId: string, rating: number) => {
+  try {
+    const res = await axiosInstance.post(`/ratings`, {
+      recipeId,
+      rating,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+// get recipe rating
+export const getRecipeRating = async (recipeId: string) => {
+  try {
+    const res = await axiosInstance.get(`/ratings/recipe/${recipeId}`);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};

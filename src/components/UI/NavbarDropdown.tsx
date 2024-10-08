@@ -32,7 +32,10 @@ const NavbarDropdown = () => {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Avatar className="cursor-pointer" name="Sohan" />
+        <Avatar
+          className="cursor-pointer"
+          name={user?.name?.firstName.toLocaleUpperCase()}
+        />
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions">
         <DropdownItem

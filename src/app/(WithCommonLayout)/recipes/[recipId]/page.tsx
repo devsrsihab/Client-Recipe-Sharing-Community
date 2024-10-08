@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useState, useMemo } from "react";
 import RecipeDetailsLoader from "@/src/components/UI/RecipeDetailsLoader";
 import { useUser } from "@/src/context/user.provider";
 import {
@@ -9,7 +10,6 @@ import {
 } from "@/src/hooks/recipe.hook";
 import { Button } from "@nextui-org/button";
 import { DownvotedIcon, UpvotedIcon } from "@/src/config/icons";
-import { useState } from "react";
 import { format } from "date-fns";
 import {
   FlagIcon,
@@ -26,26 +26,24 @@ import FXTextArea from "@/src/components/Form/FXTextArea";
 import {
   useGetRecipeComments,
   useMakeRecipeCommentMutation,
+  useGetRecipeRating,
+  useMakeRecipeRating,
 } from "@/src/hooks/comment.hook";
+import { toast } from "sonner";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-// Add this helper function
-function isUserCreator(recipe: any, userId: string | undefined): boolean {
-  if (!userId) return false;
-  if (Array.isArray(recipe.createdBy)) {
-    return recipe.createdBy.includes(userId);
-  }
-  if (typeof recipe.createdBy === "string") {
-    return recipe.createdBy === userId;
-  }
-  if (typeof recipe.createdBy === "object" && recipe.createdBy !== null) {
-    return recipe.createdBy._id === userId;
-  }
-  return false;
-}
+// Add this new component for half-filled star
+const HalfFilledStarIcon = () => (
+  <div className="relative">
+    <OutlineStarIcon className="h-5 w-5 text-gray-300 dark:text-gray-600" />
+    <div className="absolute inset-0 overflow-hidden" style={{ width: "50%" }}>
+      <FilledStarIcon className="h-5 w-5 text-yellow-400" />
+    </div>
+  </div>
+);
 
 export default function RecipeDetails({
   params,
@@ -54,13 +52,78 @@ export default function RecipeDetails({
 }) {
   const { recipId } = params;
   const { data, isLoading, isError } = useGetRecipeDetails(recipId);
-  const {
-    mutate: handleMakeRecipeComment,
-    isPending: isMakeRecipeCommentLoading,
-    isSuccess: isMakeRecipeCommentSuccess,
-  } = useMakeRecipeCommentMutation();
   const { user } = useUser();
   const recipe = data?.data;
+
+  const { data: ratingDataRes, isLoading: isRatingLoading } =
+    useGetRecipeRating(recipId);
+  const { mutate: makeRating, isPending: isMakeRatingLoading } =
+    useMakeRecipeRating();
+
+  const ratingData = ratingDataRes?.data;
+  console.log("Rating Data:", ratingData);
+  console.log("Rating Data Type:", typeof ratingData);
+  console.log("Is Array:", Array.isArray(ratingData));
+
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [userHasRated, setUserHasRated] = useState(false);
+
+  // Helper function to safely get ratings array
+  const getRatingsArray = useMemo(() => {
+    if (Array.isArray(ratingData)) return ratingData;
+    if (typeof ratingData === "object" && ratingData !== null)
+      return Object.values(ratingData);
+    return [];
+  }, [ratingData]);
+
+  // Calculate average rating
+  const averageRating = useMemo(() => {
+    const ratings = getRatingsArray;
+    if (ratings.length === 0) return 0;
+    const sum = ratings.reduce((acc, curr) => acc + (curr.rating || 0), 0);
+    return sum / ratings.length;
+  }, [getRatingsArray]);
+
+  // Initialize user rating and check if user has already rated
+  useEffect(() => {
+    if (user && ratingData) {
+      const ratings = getRatingsArray;
+      const existingRating = ratings.find((r: any) => r.user._id === user._id);
+      if (existingRating) {
+        setUserRating(existingRating.rating);
+        setUserHasRated(true);
+      } else {
+        setUserHasRated(false);
+      }
+    }
+  }, [user, ratingData, getRatingsArray]);
+
+  const handleRatingSubmit = useCallback(() => {
+    if (!user) {
+      toast.error("Please log in to rate this recipe");
+      return;
+    }
+    if (userRating === null) {
+      toast.error("Please select a rating");
+      return;
+    }
+    makeRating(
+      { recipeId: recipId, rating: userRating },
+      {
+        onSuccess: () => {
+          toast.success("Rating submitted successfully");
+        },
+        onError: (error: any) => {
+          toast.error(error.message.replace("Error: ", ""));
+          console.error("Rating submission error:", error);
+        },
+      }
+    );
+  }, [user, userRating, recipId, makeRating]);
+
+  const handleRatingClick = useCallback((rating: number) => {
+    setUserRating(rating);
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const { data: commentsData, isLoading: isCommentsLoading } =
@@ -87,18 +150,19 @@ export default function RecipeDetails({
     downvoteRecipe(recipId);
   };
 
-  const [rating, setRating] = useState(0);
-
-  const handleRatingSubmit = () => {
-    console.log({ rating });
-  };
+  const {
+    mutate: handleMakeRecipeComment,
+    isPending: isMakeRecipeCommentLoading,
+    isSuccess: isMakeRecipeCommentSuccess,
+  } = useMakeRecipeCommentMutation();
 
   const handleCommentSubmit = (data: any) => {
     console.log({ recipeId: recipId, comment: data.comment });
     handleMakeRecipeComment({ recipeId: recipId, comment: data.comment });
   };
 
-  if (isLoading)
+  // Render loading state for the entire component
+  if (isLoading || isRatingLoading) {
     return (
       <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
@@ -106,12 +170,12 @@ export default function RecipeDetails({
         </div>
       </div>
     );
+  }
 
-  if (isError)
+  if (isError || !recipe)
     return (
       <div className="text-center py-10 text-red-500">Error loading recipe</div>
     );
-  if (!recipe) return <div className="text-center py-10">Recipe not found</div>;
 
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200">
@@ -137,19 +201,29 @@ export default function RecipeDetails({
 
             <div className="mt-3 flex items-center">
               <div className="flex items-center">
-                {[0, 1, 2, 3, 4].map((rating) => (
-                  <StarIcon
-                    key={rating}
-                    className={classNames(
-                      recipe.ratings.length > rating
-                        ? "text-yellow-400"
-                        : "text-gray-300 dark:text-gray-600",
-                      "h-5 w-5 flex-shrink-0"
-                    )}
-                  />
-                ))}
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const difference = averageRating - star;
+                    return (
+                      <span key={star}>
+                        {difference >= 0 ? (
+                          <FilledStarIcon className="h-5 w-5 text-yellow-400" />
+                        ) : difference > -1 && difference < 0 ? (
+                          <HalfFilledStarIcon />
+                        ) : (
+                          <OutlineStarIcon className="h-5 w-5 text-gray-300 dark:text-gray-600" />
+                        )}
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
-              <p className="ml-3 text-sm">{recipe.ratings.length} ratings</p>
+              <p className="ml-3 text-sm">
+                {averageRating > 0
+                  ? averageRating.toFixed(1)
+                  : "No ratings yet"}{" "}
+                ({getRatingsArray.length} ratings)
+              </p>
             </div>
 
             <div className="mt-6">
@@ -246,14 +320,16 @@ export default function RecipeDetails({
           <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <div className="flex flex-col sm:flex-row items-center justify-between">
               <div className="flex items-center mb-4 sm:mb-0">
-                <span className="text-5xl font-bold mr-2">4.5</span>
+                <span className="text-5xl font-bold mr-2">
+                  {averageRating > 0 ? averageRating.toFixed(1) : "N/A"}
+                </span>
                 <div className="flex flex-col">
                   <div className="flex">
-                    {[0, 1, 2, 3, 4].map((rating) => (
+                    {[1, 2, 3, 4, 5].map((star) => (
                       <FilledStarIcon
-                        key={rating}
+                        key={star}
                         className={classNames(
-                          rating < 4
+                          star <= Math.round(averageRating)
                             ? "text-yellow-400"
                             : "text-gray-300 dark:text-gray-600",
                           "h-5 w-5 flex-shrink-0"
@@ -262,60 +338,93 @@ export default function RecipeDetails({
                     ))}
                   </div>
                   <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Based on 123 ratings
+                    Based on {getRatingsArray.length} ratings
                   </span>
                 </div>
               </div>
               <div className="w-full sm:w-1/2">
-                {[5, 4, 3, 2, 1].map((star) => (
-                  <div key={star} className="flex items-center mb-1">
-                    <span className="text-sm w-2 mr-2">{star}</span>
-                    <StarIcon className="h-4 w-4 text-yellow-400 mr-2" />
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-yellow-400 h-2 rounded-full"
-                        style={{ width: `${star * 20}%` }}
-                      ></div>
+                {[5, 4, 3, 2, 1].map((star) => {
+                  const ratings = getRatingsArray;
+                  const count = ratings.filter(
+                    (r: any) => Math.floor(r.rating) === star
+                  ).length;
+                  const percentage =
+                    ratings.length > 0 ? (count / ratings.length) * 100 : 0;
+                  return (
+                    <div key={star} className="flex items-center mb-1">
+                      <span className="text-sm w-2 mr-2">{star}</span>
+                      <StarIcon className="h-4 w-4 text-yellow-400 mr-2" />
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-yellow-400 h-2 rounded-full"
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm ml-2">
+                        {percentage.toFixed(1)}%
+                      </span>
                     </div>
-                    <span className="text-sm ml-2">{star * 20}%</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* Add rating and comment form */}
+          {/* Add rating form or display user's rating */}
           <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Rate this Recipe</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              {userHasRated ? "Your Rating" : "Rate this Recipe"}
+            </h3>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Your Rating
-                </label>
-                <div className="flex items-center">
-                  {[1, 2, 3, 4, 5].map((star) =>
-                    star <= rating ? (
+              {userHasRated ? (
+                <div>
+                  <p>You've rated this recipe:</p>
+                  <div className="flex items-center mt-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
                       <FilledStarIcon
                         key={star}
-                        className="h-8 w-8 flex-shrink-0 cursor-pointer text-yellow-400"
-                        onClick={() => setRating(star)}
+                        className={classNames(
+                          star <= (userRating || 0)
+                            ? "text-yellow-400"
+                            : "text-gray-300 dark:text-gray-600",
+                          "h-8 w-8"
+                        )}
                       />
-                    ) : (
-                      <OutlineStarIcon
-                        key={star}
-                        className="h-8 w-8 flex-shrink-0 cursor-pointer text-gray-300 dark:text-gray-600"
-                        onClick={() => setRating(star)}
-                      />
-                    )
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <button
-                onClick={handleRatingSubmit}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Confirm Rating
-              </button>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Your Rating
+                    </label>
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => handleRatingClick(star)}
+                          className="focus:outline-none"
+                        >
+                          {star <= (userRating || 0) ? (
+                            <FilledStarIcon className="h-8 w-8 text-yellow-400" />
+                          ) : (
+                            <OutlineStarIcon className="h-8 w-8 text-gray-300 dark:text-gray-600" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleRatingSubmit}
+                    disabled={isMakeRatingLoading || userRating === null}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isMakeRatingLoading ? "Submitting..." : "Confirm Rating"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -410,7 +519,7 @@ export default function RecipeDetails({
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
