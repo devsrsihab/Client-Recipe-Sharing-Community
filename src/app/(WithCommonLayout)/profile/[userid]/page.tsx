@@ -1,4 +1,4 @@
-import Recipes from "@/src/components/modules/home/Recipes";
+import UserRecipes from "@/src/components/modules/home/UserRecipes";
 import UserProfileCard from "@/src/components/modules/myprofile/UserProfileCard";
 import Container from "@/src/components/UI/Container";
 
@@ -14,7 +14,7 @@ const UserProfilePage = ({ params }: { params: { userid: string } }) => {
           <h2 className="text-3xl font-bold mb-6 text-indigo-600 dark:text-indigo-400">
             User Recipes
           </h2>
-          <Recipes isCardHeader={false} />
+          <UserRecipes userId={userid} />
         </div>
       </div>
     </Container>

@@ -110,7 +110,7 @@ const RegisterForm = () => {
             style={{
               backgroundImage: "url('/register.webp')",
             }}
-          ></div>
+          />
         </div>
       </section>
     </Container>

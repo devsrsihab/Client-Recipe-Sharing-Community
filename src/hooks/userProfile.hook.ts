@@ -3,6 +3,7 @@ import {
   followUser,
   getFollowerList,
   getFollowingList,
+  getUserRecipes,
   getUserSingleInfo,
   unfollowUser,
   updateUserProfile,
@@ -78,5 +79,17 @@ export const useGetUserFollowing = () => {
   return useQuery({
     queryKey: ["USER_PROFILE_FOLLOWING"],
     queryFn: async () => await getFollowingList(),
+  });
+};
+
+// get user recipes
+export const useGetUserRecipes = (
+  id: string,
+  page: number = 1,
+  limit: number = 6
+) => {
+  return useQuery({
+    queryKey: ["USER_RECIPES", id],
+    queryFn: async () => await getUserRecipes(id, page, limit),
   });
 };

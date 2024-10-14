@@ -17,6 +17,7 @@ import { ComponentType, ReactElement } from "react";
 
 import Link from "next/link";
 import { useUser } from "@/src/context/user.provider";
+import { Logo } from "../../icons";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -42,6 +43,7 @@ const SidebarMenu = ({
 }: {
   navigation: IMenu[];
   sidebarOpen: boolean;
+  // eslint-disable-next-line no-unused-vars
   setSidebarOpen: (open: boolean) => void;
 }) => {
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
@@ -176,11 +178,7 @@ const SidebarMenu = ({
             <div className="flex grow flex-col gap-y-5 overflow-y-auto dark:bg-gray-900 bg-white px-6 pb-4 ring-1 ring-white/10">
               <div className="flex h-16 shrink-0 items-center">
                 <Link href="/">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                    className="h-8 w-auto"
-                  />
+                  <Logo />
                 </Link>
               </div>
               <nav className="flex flex-1 flex-col">
@@ -218,11 +216,7 @@ const SidebarMenu = ({
         <div className="flex grow flex-col gap-y-5 overflow-y-auto dark:bg-gray-900 bg-white px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
             <Link href="/">
-              <img
-                alt="Your Company"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
-              />
+              <Logo />
             </Link>
           </div>
           <nav className="flex flex-1 flex-col">

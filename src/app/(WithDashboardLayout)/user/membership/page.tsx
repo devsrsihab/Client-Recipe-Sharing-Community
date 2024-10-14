@@ -1,5 +1,7 @@
+import UserMembershipComponent from "@/src/components/modules/membership";
+
 const UserMembershipPage = () => {
-  return <div>User Membership Page</div>;
+  return <UserMembershipComponent />;
 };
 
 export default UserMembershipPage;

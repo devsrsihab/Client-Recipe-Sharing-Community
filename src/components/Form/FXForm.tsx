@@ -22,11 +22,11 @@ const FXForm = ({
 }: IProps) => {
   // form config
   const formConfig: IFormConfig = {};
-  if (!!defaultValues) {
+  if (defaultValues) {
     formConfig["defaultValues"] = defaultValues;
   }
 
-  if (!!resolver) {
+  if (resolver) {
     formConfig["resolver"] = resolver;
   }
 
@@ -37,7 +37,7 @@ const FXForm = ({
     if (isReset) {
       methods.reset();
     }
-  }, [isReset]);
+  }, [isReset, methods]);
 
   const handleSubmit = methods.handleSubmit;
 

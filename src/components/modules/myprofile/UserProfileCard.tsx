@@ -74,35 +74,35 @@ const UserProfileCard = ({ id }: UserProfileCardProps) => {
     return (
       <Card className="max-w-sm w-full mx-auto mt-16 bg-white dark:bg-gray-800 shadow-xl rounded-lg text-gray-900 dark:text-gray-100 overflow-hidden">
         <Skeleton className="w-full h-32">
-          <div className="h-32 bg-default-300"></div>
+          <div className="h-32 bg-default-300" />
         </Skeleton>
         <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white dark:border-gray-800 rounded-full overflow-hidden">
           <Skeleton className="w-full h-full rounded-full">
-            <div className="w-full h-full bg-default-200"></div>
+            <div className="w-full h-full bg-default-200" />
           </Skeleton>
         </div>
         <div className="text-center mt-2 px-4 space-y-2">
           <Skeleton className="w-3/4 mx-auto">
-            <div className="h-6 bg-default-200"></div>
+            <div className="h-6 bg-default-200" />
           </Skeleton>
           <Skeleton className="w-1/2 mx-auto">
-            <div className="h-4 bg-default-200"></div>
+            <div className="h-4 bg-default-200" />
           </Skeleton>
           <Skeleton className="w-5/6 mx-auto">
-            <div className="h-4 bg-default-200"></div>
+            <div className="h-4 bg-default-200" />
           </Skeleton>
         </div>
         <div className="py-4 mt-2 flex items-center justify-around">
           <Skeleton className="w-1/4">
-            <div className="h-12 bg-default-200"></div>
+            <div className="h-12 bg-default-200" />
           </Skeleton>
           <Skeleton className="w-1/4">
-            <div className="h-12 bg-default-200"></div>
+            <div className="h-12 bg-default-200" />
           </Skeleton>
         </div>
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 mx-8 mt-2">
           <Skeleton className="w-full">
-            <div className="h-10 bg-default-200 rounded-full"></div>
+            <div className="h-10 bg-default-200 rounded-full" />
           </Skeleton>
         </div>
       </Card>

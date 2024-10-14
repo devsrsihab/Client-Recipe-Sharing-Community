@@ -26,12 +26,10 @@ const FXDropRoleAndStatusChange = ({
 
   // role update handler
   const handleRoleUpdate = (id: string, role: string) => {
-    console.log(role, id);
     changeUserRole({ id, role });
   };
   // status update handler
   const handleStatusUpdate = (id: string, status: string) => {
-    console.log(status, id);
     changeUserStatus({ id, status });
   };
 

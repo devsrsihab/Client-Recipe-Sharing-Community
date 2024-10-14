@@ -4,15 +4,15 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
+import { ReactNode } from "react";
 
 interface IProps {
   buttonText: string;
   buttonClassName?: string;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function FXModal({
@@ -30,18 +30,10 @@ export default function FXModal({
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose: any) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
               <ModalBody>{children}</ModalBody>
-              {/* <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter> */}
             </>
           )}
         </ModalContent>

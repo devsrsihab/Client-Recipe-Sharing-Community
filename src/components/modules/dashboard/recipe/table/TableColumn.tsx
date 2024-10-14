@@ -13,6 +13,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Image } from "@nextui-org/image";
 import Link from "next/link";
+import React from "react";
 
 export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
   const cellValue = recipe[columnKey as keyof IRecipe];
@@ -32,7 +33,7 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
       return <> {cellValue}</>;
     case "category":
       return <> {cellValue ? (cellValue as Partial<ICategory>).name : "N/A"}</>;
-    case "status":
+    case "status": {
       let statusColor: string;
       let StatusIcon: React.ElementType;
 
@@ -68,7 +69,7 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
           </span>
         </div>
       );
-
+    }
     case "actions":
       return (
         <div className="relative flex items-center gap-4">

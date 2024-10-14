@@ -11,6 +11,7 @@ import {
   updateRecipe,
   upvoteRecipe,
 } from "../services/Recipes";
+import { useRouter } from "next/navigation";
 
 // get recipe feeds
 export const useGetRecipeFeeds = (page: number = 1, limit: number = 6) => {
@@ -23,10 +24,14 @@ export const useGetRecipeFeeds = (page: number = 1, limit: number = 6) => {
 
 // create recipes
 export const useCreateRecipeMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["CREATE_RECIPE"],
     mutationFn: async (postData) => await createRecipe(postData),
-    onSuccess: () => toast.success("Recipe Created Successfully"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["GET_RECIPE_FEEDS"] });
+      toast.success("Recipe Created Successfully");
+    },
     onError: (error) => toast.error(error.message.replace("Error: ", "")),
   });
 };
@@ -42,18 +47,34 @@ export const useGetRecipes = () => {
 
 // get recipe details
 export const useGetRecipeDetails = (recipeId: string) => {
+  const router = useRouter();
   return useQuery({
     queryKey: ["GET_RECIPE_DETAILS", recipeId],
-    queryFn: async () => await getRecipeDetails(recipeId),
+    queryFn: async () => {
+      const res = await getRecipeDetails(recipeId);
+      if (res?.success === false) {
+        toast.error(res?.message);
+        router.push("/auth/login");
+        return res;
+      } else {
+        return res;
+      }
+    },
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
   });
 };
 
 // update recipe
 export const useUpdateRecipeMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation<any, Error, FieldValues>({
     mutationKey: ["UPDATE_RECIPE"],
     mutationFn: async ({ id, data }) => await updateRecipe(id, data),
-    onSuccess: () => toast.success("Recipe Updated Successfully"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["GET_RECIPE_FEEDS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_RECIPES"] });
+      toast.success("Recipe Updated Successfully");
+    },
     onError: (error) => toast.error(error.message.replace("Error: ", "")),
   });
 };
@@ -77,14 +98,19 @@ export const useUpvoteRecipeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<any, Error, string>({
     mutationKey: ["UPVOTE_RECIPE"],
-    mutationFn: async (id) => await upvoteRecipe(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({
-        queryKey: ["GET_RECIPE_DETAILS", id],
-      });
-      toast.success("Upvoted Successfully");
+    mutationFn: async (id) => {
+      const res = await upvoteRecipe(id);
+      if (res?.success === false) {
+        toast.error(res?.message);
+        return res;
+      } else {
+        toast.success("Upvoted Successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["GET_RECIPE_DETAILS", id],
+        });
+        return res;
+      }
     },
-    onError: (error) => toast.error(error.message.replace("Error: ", "")),
   });
 };
 

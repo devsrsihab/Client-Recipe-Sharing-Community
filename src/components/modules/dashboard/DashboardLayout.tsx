@@ -1,14 +1,13 @@
 "use client";
 
 import SidebarMenu from "@/src/components/modules/dashboard/SidebarMenu";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
   adminNavigation,
   userNavigation,
-  userTest,
 } from "@/src/components/modules/dashboard/menuConstant";
 import Link from "next/link";
 import { ThemeSwitch } from "../../theme-switch";
@@ -16,7 +15,7 @@ import { logOutUser } from "@/src/services/AuthService";
 import { useUser } from "@/src/context/user.provider";
 import { useRouter } from "next/navigation";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user } = useUser();
@@ -29,7 +28,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       await logOutUser();
       router.push("/auth/login");
     } catch (error) {
-      console.error("Logout failed:", error);
       // Optionally, you can show an error message to the user here
     } finally {
       setIsLoggingOut(false);
@@ -40,7 +38,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       {isLoggingOut && (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100" />
         </div>
       )}
 

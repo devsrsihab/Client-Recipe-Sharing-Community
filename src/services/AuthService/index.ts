@@ -31,7 +31,12 @@ export const loginUser = async (userData: FieldValues) => {
     }
     return data;
   } catch (error: any) {
-    throw new Error(error);
+    const errData = {
+      success: false,
+      message: error?.message,
+    };
+
+    return errData;
   }
 };
 
@@ -54,6 +59,7 @@ export const getCurrentuser = async () => {
       email: decodedToken?.email,
       role: decodedToken?.role,
       profilePicture: decodedToken?.profilePicture,
+      isPremium: decodedToken?.isPremium,
     };
   }
 
@@ -88,5 +94,39 @@ export const changePassword = async (changeData: FieldValues) => {
     return data;
   } catch (error: any) {
     throw new Error(error);
+  }
+};
+
+// forget password service
+export const forgetPassword = async (forgetData: FieldValues) => {
+  try {
+    const { data } = await axiosInstance.post(
+      "/auth/forget-password",
+      forgetData
+    );
+    return data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+// reset password service
+export const resetPassword = async (resetData: FieldValues, token: string) => {
+  try {
+    const { data } = await axiosInstance.post(
+      "/auth/reset-password",
+      resetData,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return data;
+  } catch (error: any) {
+    if (error && error.message) {
+      throw new Error(error.message);
+    }
+    throw new Error("An error occurred while resetting the password");
   }
 };

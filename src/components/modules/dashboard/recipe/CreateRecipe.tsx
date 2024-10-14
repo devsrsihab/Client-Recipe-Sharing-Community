@@ -12,7 +12,7 @@ import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import {
   FieldValues,
   FormProvider,
@@ -21,7 +21,9 @@ import {
   useForm,
   Controller,
 } from "react-hook-form";
-import JoditEditor from "jodit-react";
+import dynamic from "next/dynamic";
+
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 type FormValues = {
   ingredients: Array<{ name: string; quantity: string }>;
@@ -30,8 +32,6 @@ type FormValues = {
 };
 
 function CreateRecipe() {
-  // define state
-  const editor = useRef(null);
   const desctiptionConfig = useMemo(
     () => ({
       theme: "default",
@@ -45,6 +45,7 @@ function CreateRecipe() {
     }),
     []
   );
+
   const instructionsConfig = useMemo(
     () => ({
       theme: "default",
@@ -58,6 +59,7 @@ function CreateRecipe() {
     }),
     []
   );
+
   const [imageFile, setImageFile] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
   const {
@@ -137,7 +139,6 @@ function CreateRecipe() {
     };
 
     createRecipe(recipeData);
-    console.log(recipeData);
   };
 
   // handle field array append
@@ -146,7 +147,7 @@ function CreateRecipe() {
   };
 
   // handle image change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0];
     setImageFile([...imageFile, file]);
 
@@ -159,6 +160,12 @@ function CreateRecipe() {
       reader.readAsDataURL(file);
     }
   };
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <div className="h-full rounded-xl bg-gradient-to-b from-default-100 px-20 py-12">
@@ -195,7 +202,6 @@ function CreateRecipe() {
           {/* instructions and description */}
           <div className="flex flex-wrap gap-4 py-2">
             <div className="min-w-fit flex-1">
-              {/* <FXTextArea name="instructions" label="Instructions" /> */}
               <Controller
                 name="instructions"
                 control={control}
@@ -204,14 +210,13 @@ function CreateRecipe() {
                     <label className="mb-3" htmlFor="instructions">
                       Instructions
                     </label>
-                    <JoditEditor
-                      ref={editor}
-                      value={field.value as string}
-                      onChange={(newContent) => {
-                        field.onChange(newContent);
-                      }}
-                      config={instructionsConfig}
-                    />
+                    {isMounted && (
+                      <JoditEditor
+                        value={field.value as string}
+                        onChange={(newContent) => field.onChange(newContent)}
+                        config={instructionsConfig}
+                      />
+                    )}
                     {errors.instructions && (
                       <span className="text-red-500">
                         {errors.instructions.message as string}
@@ -221,6 +226,7 @@ function CreateRecipe() {
                 )}
               />
             </div>
+
             <div className="min-w-fit flex-1">
               <Controller
                 name="description"
@@ -230,14 +236,13 @@ function CreateRecipe() {
                     <label className="mb-3" htmlFor="description">
                       Description
                     </label>
-                    <JoditEditor
-                      ref={editor}
-                      value={field.value}
-                      onChange={(newContent) => {
-                        field.onChange(newContent);
-                      }}
-                      config={desctiptionConfig}
-                    />
+                    {isMounted && (
+                      <JoditEditor
+                        value={field.value as string}
+                        onChange={(newContent) => field.onChange(newContent)}
+                        config={desctiptionConfig}
+                      />
+                    )}
                     {errors.description && (
                       <span className="text-red-500">
                         {errors.description.message as string}

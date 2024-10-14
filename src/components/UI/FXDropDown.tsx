@@ -15,6 +15,7 @@ const FXDropDown = ({
   defaultItem, // Add defaultItem prop
 }: {
   menuItems: string[];
+  // eslint-disable-next-line no-unused-vars
   getValueFunction: (value: string) => void;
   buttonLabel: string;
   defaultItem?: string; // The default selected item

@@ -27,7 +27,7 @@ const UserDetailsView = ({ params }: { params: { viewUser: string } }) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen dark:bg-gray-800">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100" />
       </div>
     );
   }
@@ -62,7 +62,7 @@ const UserDetailsView = ({ params }: { params: { viewUser: string } }) => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 dark:bg-gray-800 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-700 shadow-xl rounded-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-purple-500 to-indigo-600 h-48"></div>
+        <div className="bg-gradient-to-r from-purple-500 to-indigo-600 h-48" />
         <div className="relative -mt-24 px-6">
           <div className="bg-white dark:bg-gray-800 rounded-full overflow-hidden p-2 inline-block shadow-xl">
             {user?.profilePicture ? (

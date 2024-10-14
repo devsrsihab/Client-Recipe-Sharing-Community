@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import React, { useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import { userRenderCell } from "./UserTableColumn";
@@ -24,45 +24,16 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/dropdown";
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/24/outline";
-
-// Define a styled component for the DropdownItem
-const StyledDropdownItem = {
-  "& span#react-aria5330686555-\\:r36\\: svg": {
-    display: "none",
-  },
-  "& span#react-aria5330686555-\\:r39\\: svg": {
-    display: "none",
-  },
-  "& span#react-aria5330686555-\\:r3c\\: svg": {
-    display: "none",
-  },
-};
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const UserDataTable = () => {
   const { data, isLoading } = useGetAllUsers();
   const [page, setPage] = useState(1);
   const [filterValue, setFilterValue] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
-
-  const statusColorMap: Record<string, any> = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
-  };
 
   const users = data?.data;
   const rowsPerPage = 5;
-
-  const pages = Math.ceil(users?.length / rowsPerPage);
-
-  const slicesUsers = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return users?.slice(start, end);
-  }, [page, users]);
 
   const onClear = React.useCallback(() => {
     setFilterValue("");
@@ -80,12 +51,15 @@ const UserDataTable = () => {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const statusOptions = [
-    { name: "All", id: "all" },
-    { name: "Active", id: "active" },
-    { name: "Pending", id: "pending" },
-    { name: "Blocked", id: "blocked" },
-  ];
+  const statusOptions = useMemo(
+    () => [
+      { name: "All", id: "all" },
+      { name: "Active", id: "active" },
+      { name: "Pending", id: "pending" },
+      { name: "Blocked", id: "blocked" },
+    ],
+    []
+  );
 
   // filter
   const filteredItems = React.useMemo(() => {
@@ -142,7 +116,6 @@ const UserDataTable = () => {
                 onSelectionChange={(keys) => {
                   const selected = Array.from(keys);
                   setStatusFilter(selected.join(","));
-                  setSelectedStatus(selected.join(","));
                 }}
               >
                 {statusOptions.map((status) => (
@@ -161,13 +134,7 @@ const UserDataTable = () => {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    statusFilter,
-    onSearchChange,
-    users?.length,
-    hasSearchFilter,
-  ]);
+  }, [filterValue, statusFilter, onSearchChange, onClear, statusOptions]);
 
   return (
     <div className="relative">

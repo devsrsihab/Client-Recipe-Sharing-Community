@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/table";
-import React, { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import { renderCell } from "./TableColumn";
@@ -31,18 +31,18 @@ const RecipeDataTable = () => {
   const { user: currentUser } = useUser();
   const { data, isLoading } = useGetRecipes();
   const [page, setPage] = useState(1);
-  const [filterValue, setFilterValue] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState<string>("all");
+  const [filterValue, setFilterValue] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const recipes = data?.data;
   const rowsPerPage = 5;
 
-  const onClear = React.useCallback(() => {
+  const onClear = useCallback(() => {
     setFilterValue("");
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value?: string) => {
+  const onSearchChange = useCallback((value?: string) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
@@ -53,15 +53,17 @@ const RecipeDataTable = () => {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const statusOptions = [
-    { name: "All", id: "all" },
-    { name: "Pending", id: "pending" },
-    { name: "Published", id: "published" },
-    { name: "Unpublished", id: "unpublished" },
-    { name: "Private", id: "private" },
-  ];
+  const statusOptions = useMemo(
+    () => [
+      { name: "Pending", id: "pending" },
+      { name: "Published", id: "published" },
+      { name: "Unpublished", id: "unpublished" },
+      { name: "Private", id: "private" },
+    ],
+    []
+  );
 
-  const filteredItems = React.useMemo(() => {
+  const filteredItems = useMemo(() => {
     let filteredRecipes = [...(recipes || [])];
 
     if (hasSearchFilter) {
@@ -80,7 +82,7 @@ const RecipeDataTable = () => {
     return filteredRecipes;
   }, [recipes, filterValue, statusFilter, hasSearchFilter]);
 
-  const topContent = React.useMemo(() => {
+  const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -136,7 +138,14 @@ const RecipeDataTable = () => {
         </div>
       </div>
     );
-  }, [filterValue, statusFilter, onSearchChange, onClear]);
+  }, [
+    filterValue,
+    statusFilter,
+    onSearchChange,
+    onClear,
+    currentUser?.role,
+    statusOptions,
+  ]);
 
   return (
     <div className="relative">

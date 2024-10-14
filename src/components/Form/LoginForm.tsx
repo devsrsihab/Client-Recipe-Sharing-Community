@@ -35,7 +35,7 @@ const LoginForm = () => {
         router.push("/");
       }
     }
-  }, [isPending, isSuccess]);
+  }, [isPending, isSuccess, redirect, router]);
 
   return (
     <Container>
@@ -100,7 +100,7 @@ const LoginForm = () => {
             style={{
               backgroundImage: "url('/login-image.webp')",
             }}
-          ></div>
+          />
         </div>
       </section>
     </Container>

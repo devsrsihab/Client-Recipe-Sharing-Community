@@ -41,7 +41,12 @@ export const getRecipeDetails = async (recipeId: string) => {
     const res = await axiosInstance.get(`/recipes/${recipeId}`);
     return res.data;
   } catch (error: any) {
-    throw new Error(error);
+    const errData = {
+      success: false,
+      message: error?.message,
+    };
+
+    return errData;
   }
 };
 
@@ -74,7 +79,12 @@ export const upvoteRecipe = async (recipeId: string) => {
     const res = await axiosInstance.post(`/recipes/${recipeId}/upvote`);
     return res.data;
   } catch (error: any) {
-    throw new Error(error);
+    const errData = {
+      success: false,
+      message: error?.message,
+    };
+
+    return errData;
   }
 };
 

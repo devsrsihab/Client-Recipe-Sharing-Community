@@ -1,6 +1,7 @@
-import {
+import React, {
   createContext,
   Dispatch,
+  ReactNode,
   SetStateAction,
   useContext,
   useEffect,
@@ -9,17 +10,24 @@ import {
 import { getCurrentuser } from "../services/AuthService";
 import { IUser } from "../types/post.type";
 
-const userContext = createContext<IuserProviderValues | undefined>(undefined);
+// Define the context with a default value
+const UserContext = createContext<IuserProviderValues>({
+  user: null,
+  setUser: () => {},
+  isLoading: true,
+  setIsLoading: () => {},
+});
 
 // type define
 interface IuserProviderValues {
   user: IUser | null;
+  // eslint-disable-next-line no-unused-vars
   setUser: (user: IUser | null) => void;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const UserProvider = ({ children }: { children: React.ReactNode }) => {
+const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,18 +45,17 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isLoading]);
 
   return (
-    <userContext.Provider value={{ user, setUser, isLoading, setIsLoading }}>
+    <UserContext.Provider value={{ user, setUser, isLoading, setIsLoading }}>
       {children}
-    </userContext.Provider>
+    </UserContext.Provider>
   );
 };
 
 export const useUser = () => {
-  const context = useContext(userContext);
+  const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error("useUser must be used within a userProvider");
+    throw new Error("useUser must be used within a UserProvider");
   }
-
   return context;
 };
 

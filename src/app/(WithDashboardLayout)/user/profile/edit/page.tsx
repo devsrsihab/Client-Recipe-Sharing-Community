@@ -16,7 +16,7 @@ import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   FieldValues,
   FormProvider,
@@ -81,7 +81,7 @@ const EditProfilePage = () => {
   };
 
   // handle image change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0];
     setImageFile(file);
 
@@ -108,7 +108,7 @@ const EditProfilePage = () => {
   if (isSingleUserLoading) {
     return (
       <div className="flex justify-center items-center h-screen dark:bg-gray-800">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100" />
       </div>
     );
   }

@@ -33,7 +33,9 @@ const FXRadio = ({ name, label, options, defaultValue }: IProps) => {
         className={`max-w-xs ${errorMessage ? "invalid-class" : ""}`}
       >
         {options.map((option) => (
-          <Radio value={option.key}>{option.label}</Radio>
+          <Radio key={option.key} value={option.key}>
+            {option.label}
+          </Radio>
         ))}
       </RadioGroup>
     </>

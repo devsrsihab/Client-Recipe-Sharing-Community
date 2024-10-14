@@ -1,6 +1,7 @@
 import { ThemeProviderProps } from "next-themes/dist/types";
+import { ReactNode } from "react";
 
 export interface ProvidersProps {
-  children: React.ReactNode;
+  children: ReactNode;
   themeProps?: ThemeProviderProps;
 }

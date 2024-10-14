@@ -6,13 +6,15 @@ import {
   EyeIcon,
   PencilIcon,
   TrashIcon,
-  ClockIcon,
   XCircleIcon,
-  GlobeAltIcon,
-  LockClosedIcon,
 } from "@heroicons/react/20/solid";
+import {
+  CheckCircleIcon,
+  QuestionMarkCircleIcon,
+} from "@heroicons/react/24/outline";
 import { Image } from "@nextui-org/image";
 import Link from "next/link";
+import React from "react";
 
 export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
   const cellValue = recipe[columnKey as keyof IRecipe];
@@ -32,30 +34,26 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
       return <> {cellValue}</>;
     case "category":
       return <> {cellValue ? (cellValue as Partial<ICategory>).name : "N/A"}</>;
-    case "status":
+    case "status": {
       let statusColor: string;
       let StatusIcon: React.ElementType;
 
       switch (cellValue) {
-        case "published":
-          statusColor = "text-green-600 bg-green-100";
-          StatusIcon = GlobeAltIcon;
+        case "active": {
+          statusColor = "green";
+          StatusIcon = CheckCircleIcon;
           break;
-        case "pending":
-          statusColor = "text-yellow-600 bg-yellow-100";
-          StatusIcon = ClockIcon;
-          break;
-        case "private":
-          statusColor = "text-purple-600 bg-purple-100";
-          StatusIcon = LockClosedIcon;
-          break;
-        case "unpublished":
-          statusColor = "text-red-600 bg-red-100";
+        }
+        case "inactive": {
+          statusColor = "red";
           StatusIcon = XCircleIcon;
           break;
-        default:
-          statusColor = "text-gray-600 bg-gray-100";
-          StatusIcon = ClockIcon;
+        }
+        // Add other cases as needed
+        default: {
+          statusColor = "gray";
+          StatusIcon = QuestionMarkCircleIcon;
+        }
       }
 
       return (
@@ -68,19 +66,19 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
           </span>
         </div>
       );
-
+    }
     case "actions":
       return (
         <div className="relative flex items-center gap-4">
           <Link
-            href={`/user/recipe/view/${recipe._id}`}
+            href={`/user/recipe-managment/view/${recipe._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <EyeIcon className="size-5" />
           </Link>
 
           <Link
-            href={`/user/recipe/edit/${recipe._id}`}
+            href={`/user/recipe-managment/edit/${recipe._id}`}
             className="cursor-pointer text-lg text-default-400 active:opacity-50"
           >
             <PencilIcon className="size-5" />

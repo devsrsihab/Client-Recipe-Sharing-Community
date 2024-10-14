@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import useDebounce from "@/src/hooks/debounce.hook";
 import { useSearchItems } from "@/src/hooks/serch.hook";
 import { Input } from "@nextui-org/input";
@@ -8,19 +8,19 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const Landing = () => {
-  const {mutate:handleSearch, data, isPending, isSuccess} = useSearchItems()
-  const [searchResults, setSearchResults] = useState<any[] | []>([])
-  const {register, handleSubmit, watch} = useForm()
-  const router = useRouter()
+  const { mutate: handleSearch, data, isPending, isSuccess } = useSearchItems();
+  const [searchResults, setSearchResults] = useState<any[] | []>([]);
+  const { register, handleSubmit, watch } = useForm();
+  const router = useRouter();
 
   const searchTerm = useDebounce(watch("search"));
 
   // send search term to backend
-    useEffect(() => {
+  useEffect(() => {
     if (searchTerm) {
       handleSearch(searchTerm);
     }
-  }, [searchTerm]);
+  }, [searchTerm, handleSearch]);
 
   // set search results
   useEffect(() => {
@@ -29,34 +29,36 @@ const Landing = () => {
     }
 
     if (!isPending && isSuccess && data && searchTerm) {
-      setSearchResults(data?.data?.hits)
+      setSearchResults(data?.data?.hits);
     }
   }, [searchTerm, isPending, isSuccess, data]);
 
-
   const onSubmit = (data: any) => {
-    const query = data.search.trim().split(" ").join("+")
-    handleSeeAllItems(query)
-  }
+    const query = data.search.trim().split(" ").join("+");
+    handleSeeAllItems(query);
+  };
 
   // handle see all items
   const handleSeeAllItems = (query: string) => {
-     const searchQuery = query.trim().split(" ").join("+")
-    router.push(`/found-items?query=${searchQuery}`)
-  }
-
+    const searchQuery = query.trim().split(" ").join("+");
+    router.push(`/found-items?query=${searchQuery}`);
+  };
 
   return (
     <div className="h-[calc(100vh-64px)] bg-[url('/glass.jpg')] bg-cover bg-center ">
       <div className=" mx-auto pt-32 max-w-xl">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Input {...register("search")} classNames={{ 
+          <Input
+            {...register("search")}
+            classNames={{
               inputWrapper: "bg-default-100",
-              input: "text-sm"
-
-           }} type="text" label="Search..." />
+              input: "text-sm",
+            }}
+            type="text"
+            label="Search..."
+          />
         </form>
-         {searchResults.length > 0 && (
+        {searchResults.length > 0 && (
           <div className="mt-2 rounded-xl bg-default-100 p-3">
             <div className="space-y-3">
               {searchResults.map((item, index) => (

@@ -3,9 +3,7 @@
 import { PlusIcon, TrashIcon } from "@/src/assets/icons";
 import FXInput from "@/src/components/Form/FXInput";
 import FXSelect from "@/src/components/Form/FXSelect";
-import FXTextArea from "@/src/components/Form/FXTextArea";
 import { RECIPE_ISPAID_OPTIONS, RECIPE_STATUS_OPTIONS } from "@/src/constant";
-import { useUser } from "@/src/context/user.provider";
 import { useGetCategories } from "@/src/hooks/categories.hook";
 import {
   useGetRecipeDetails,
@@ -17,7 +15,7 @@ import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   Controller,
   FieldValues,
@@ -40,16 +38,12 @@ const EditRecipe = ({ recipeId }: { recipeId: string }) => {
 
   const reciepeSingle = recipeSingleData?.data;
 
-  const {
-    mutate: handleUpdateRecipe,
-    isPending: recipePending,
-    isSuccess: isCreateRecipeSuccess,
-  } = useUpdateRecipeMutation();
+  const { mutate: handleUpdateRecipe, isPending: recipePending } =
+    useUpdateRecipeMutation();
   // get categories
   const { data: categoriesData, isLoading: categoryLoading } =
     useGetCategories();
 
-  const { user } = useUser();
   // define option let
   let categorieOptions: { key: string; label: string }[] = [];
 
@@ -135,7 +129,7 @@ const EditRecipe = ({ recipeId }: { recipeId: string }) => {
   };
 
   // handle image change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0];
     setImageFile([...imageFile, file]);
 
@@ -171,7 +165,7 @@ const EditRecipe = ({ recipeId }: { recipeId: string }) => {
   if (isSingleRecipeLoading) {
     return (
       <div className="flex justify-center items-center h-screen dark:bg-gray-800">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100" />
       </div>
     );
   }

@@ -6,6 +6,7 @@ import { Image } from "@nextui-org/image";
 import Link from "next/link";
 import FXDropRoleAndStatusChange from "../FXDropRoleAndStatusChange";
 import { IUser } from "@/src/types/post.type";
+import React from "react";
 
 export const userRenderCell = (user: IUser, columnKey: React.Key) => {
   const cellValue = user[columnKey as keyof IUser];

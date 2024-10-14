@@ -8,6 +8,7 @@ import { Image } from "@nextui-org/image";
 import { format } from "date-fns";
 import Link from "next/link";
 import { IRecipe } from "@/src/types";
+import GetAverageRating from "@/src/utils/GetAverageRating";
 
 const Card = ({ recipe }: { recipe: IRecipe }) => {
   const { title, category, image, createdAt, _id, createdBy } = recipe || {};
@@ -23,15 +24,18 @@ const Card = ({ recipe }: { recipe: IRecipe }) => {
         <Image
           removeWrapper
           alt={`${title} image`}
-          className="z-0 w-full  h-full object-cover"
+          className="z-0 w-full h-full object-cover"
           src={image}
         />
       </CardBody>
       <CardFooter className="absolute bottom-0 z-10 border-t-1 border-zinc-100/50 dark:border-zinc-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-md flex-col items-start p-4">
-        <h4 className="text-xl capitalize font-bold text-black dark:text-white mb-2">
-          {title}
-        </h4>
-        <div className="flex justify-between items-center w-full">
+        <div className="flex justify-between items-center w-full mb-2">
+          <h4 className="text-xl capitalize font-bold text-black dark:text-white">
+            {title}
+          </h4>
+          <GetAverageRating recipeId={_id} />
+        </div>
+        <div className="flex justify-between items-end w-full">
           <div>
             <p className="text-sm capitalize text-gray-700 dark:text-gray-300">
               {createdBy?.name?.firstName} {createdBy?.name?.lastName}
@@ -40,7 +44,6 @@ const Card = ({ recipe }: { recipe: IRecipe }) => {
               {format(new Date(createdAt), "dd MMMM, yyyy")}
             </p>
           </div>
-
           <Link
             className="bg-black px-4 py-2 text-tiny text-white"
             href={`/recipes/${_id}`}

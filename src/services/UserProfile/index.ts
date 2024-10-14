@@ -18,7 +18,12 @@ export const getUserSingleInfo = async (id: string) => {
     const response = await axiosInstance.get(`/users/profile/${id}`);
     return response.data;
   } catch (error: any) {
-    throw new Error(error);
+    const errData = {
+      success: false,
+      message: error?.message,
+    };
+
+    return errData;
   }
 };
 
@@ -63,9 +68,15 @@ export const unfollowUser = async (id: string) => {
 };
 
 // user recipes
-export const getUserRecipes = async (id: string) => {
+export const getUserRecipes = async (
+  id: string,
+  page: number = 1,
+  limit: number = 6
+) => {
   try {
-    const response = await axiosInstance.get(`/recipes/user/${id}`);
+    const response = await axiosInstance.get(`/recipes/user/${id}`, {
+      params: { page, limit },
+    });
     return response.data;
   } catch (error: any) {
     throw new Error(error);

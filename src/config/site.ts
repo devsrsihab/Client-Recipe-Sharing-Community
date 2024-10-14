@@ -2,15 +2,15 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "SRS RecipeX",
-  description: "SRS RecipeX",
+  description: "SRS RecipeX where you can find recipes and share your own",
   navItems: [
     {
       label: "Home",
       href: "/",
     },
     {
-      label: "My Profile",
-      href: "/myprofile",
+      label: "Membership",
+      href: "/membership",
     },
     {
       label: "Contact",
@@ -31,15 +31,14 @@ export const siteConfig = {
     },
   ],
 
-
   navMenuItems: [
     {
       label: "Home",
       href: "/",
     },
     {
-      label: "My Profile",
-      href: "/myprofile",
+      label: "Membership",
+      href: "/membership",
     },
     {
       label: "Contact",

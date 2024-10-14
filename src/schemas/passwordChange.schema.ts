@@ -13,3 +13,21 @@ export const passwordChangeSchema = z
     message: "Passwords do not match",
     path: ["confirmNewPassword"],
   });
+
+// forget password schema
+export const forgetPasswordSchema = z.object({
+  email: z.string().email("Enter a valid email"),
+});
+
+// reset password schema
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(1, { message: "Password is required" }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: "Confirm password is required" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Confirm password do not match",
+    path: ["confirmPassword"],
+  });

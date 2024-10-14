@@ -3,7 +3,6 @@
 import FXInput from "@/src/components/Form/FXInput";
 import FXSelect from "@/src/components/Form/FXSelect";
 import { USER_ROLE } from "@/src/constant";
-import { useUser } from "@/src/context/user.provider";
 import { useCreateUserMutation } from "@/src/hooks/user.hook";
 import { userCreateSchema } from "@/src/schemas/user.schem";
 import { IUser } from "@/src/types/post.type";
@@ -12,7 +11,7 @@ import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   FieldValues,
   FormProvider,
@@ -30,18 +29,12 @@ const CreateUserPage = () => {
     isSuccess,
   } = useCreateUserMutation();
 
-  const { user } = useUser();
-
   // define methods
   const methods = useForm({
     resolver: zodResolver(userCreateSchema),
   });
 
-  const {
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit, reset } = methods;
 
   // if the data suucessfully submit then reset the form
   useEffect(() => {
@@ -74,7 +67,7 @@ const CreateUserPage = () => {
   };
 
   // handle image change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0];
     setImageFile([...imageFile, file]);
 
@@ -125,7 +118,7 @@ const CreateUserPage = () => {
                 variant="bordered"
               />
             </div>
-            <div className="min-w-fit flex-1"></div>
+            <div className="min-w-fit flex-1" />
           </div>
 
           {/* image */}

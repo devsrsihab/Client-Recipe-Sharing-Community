@@ -10,13 +10,14 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
+import { ReactNode } from "react";
 
 export default function UserDeleteModal({
   recipeid,
   buttonContent,
 }: {
   recipeid?: string;
-  buttonContent?: React.ReactNode;
+  buttonContent?: ReactNode;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { mutate: deleteUser, isPending: deleteRecipeLoading } =

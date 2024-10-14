@@ -54,7 +54,7 @@ export const userNavigation = [
   { name: "Dashboard", href: "/user/dashboard", icon: HomeIcon, current: true },
   {
     name: "My Recipes",
-    href: "/user/recipe",
+    href: "/user/recipe-managment",
     icon: FolderIcon,
     current: false,
   },

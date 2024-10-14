@@ -10,13 +10,14 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
+import { ReactNode } from "react";
 
 export default function CommentDeleteModal({
   commentId,
   buttonContent,
 }: {
   commentId?: string;
-  buttonContent?: React.ReactNode;
+  buttonContent?: ReactNode;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { mutate: deleteComment, isPending: deleteCommentLoading } =

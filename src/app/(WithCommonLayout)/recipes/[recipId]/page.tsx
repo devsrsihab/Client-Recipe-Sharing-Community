@@ -10,7 +10,7 @@ import {
 } from "@/src/hooks/recipe.hook";
 import { Button } from "@nextui-org/button";
 import { DownvotedIcon, UpvotedIcon } from "@/src/config/icons";
-import { format } from "date-fns";
+import { format, isBefore } from "date-fns";
 import {
   FlagIcon,
   HandThumbUpIcon,
@@ -19,7 +19,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon as FilledStarIcon } from "@heroicons/react/20/solid";
 import FXForm from "@/src/components/Form/FXForm";
-import { useForm } from "react-hook-form";
 import { createCommentSchema } from "@/src/schemas/comment.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FXTextArea from "@/src/components/Form/FXTextArea";
@@ -31,6 +30,11 @@ import {
 } from "@/src/hooks/comment.hook";
 import { toast } from "sonner";
 import Link from "next/link";
+import {
+  LockClosedIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/solid";
+import { useGetUserSingleInfo } from "@/src/hooks/userProfile.hook";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -54,6 +58,7 @@ export default function RecipeDetails({
   const { recipId } = params;
   const { data, isLoading, isError } = useGetRecipeDetails(recipId);
   const { user } = useUser();
+
   const recipe = data?.data;
 
   const { data: ratingDataRes, isLoading: isRatingLoading } =
@@ -62,9 +67,6 @@ export default function RecipeDetails({
     useMakeRecipeRating();
 
   const ratingData = ratingDataRes?.data;
-  console.log("Rating Data:", ratingData);
-  console.log("Rating Data Type:", typeof ratingData);
-  console.log("Is Array:", Array.isArray(ratingData));
 
   const [userRating, setUserRating] = useState<number | null>(null);
   const [userHasRated, setUserHasRated] = useState(false);
@@ -99,6 +101,20 @@ export default function RecipeDetails({
     }
   }, [user, ratingData, getRatingsArray]);
 
+  const { data: userData, isLoading: userLoading } = useGetUserSingleInfo(
+    user?._id || ""
+  );
+
+  const isMembershipExpired = useMemo(() => {
+    if (userData?.data?.membershipEnd) {
+      return isBefore(new Date(userData.data.membershipEnd), new Date());
+    }
+    return false;
+  }, [userData]);
+
+  const isContentLocked =
+    recipe?.isPaid && (!userData?.data?.isPremium || isMembershipExpired);
+
   const handleRatingSubmit = useCallback(() => {
     if (!user) {
       toast.error("Please log in to rate this recipe");
@@ -116,7 +132,6 @@ export default function RecipeDetails({
         },
         onError: (error: any) => {
           toast.error(error.message.replace("Error: ", ""));
-          console.error("Rating submission error:", error);
         },
       }
     );
@@ -131,8 +146,6 @@ export default function RecipeDetails({
     useGetRecipeComments(recipId, currentPage);
   const comments = commentsData?.comments;
   const commentsMeta = commentsData?.meta;
-
-  console.log("Comments Data:", commentsMeta); // Add this line for debugging
 
   const { mutate: upvoteRecipe, isPending: isUpvoteLoading } =
     useUpvoteRecipeMutation();
@@ -158,12 +171,11 @@ export default function RecipeDetails({
   } = useMakeRecipeCommentMutation();
 
   const handleCommentSubmit = (data: any) => {
-    console.log({ recipeId: recipId, comment: data.comment });
     handleMakeRecipeComment({ recipeId: recipId, comment: data.comment });
   };
 
   // Render loading state for the entire component
-  if (isLoading || isRatingLoading) {
+  if (isLoading || isRatingLoading || userLoading) {
     return (
       <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
@@ -232,24 +244,22 @@ export default function RecipeDetails({
 
             <div className="mt-3 flex items-center">
               <div className="flex items-center">
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => {
-                    const difference = averageRating - star;
-                    return (
-                      <span key={star}>
-                        {difference >= 0 ? (
-                          <FilledStarIcon className="h-5 w-5 text-yellow-400" />
-                        ) : difference > -1 && difference < 0 ? (
-                          <HalfFilledStarIcon />
-                        ) : (
-                          <OutlineStarIcon className="h-5 w-5 text-gray-300 dark:text-gray-600" />
-                        )}
-                      </span>
-                    );
-                  })}
-                </div>
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const difference = averageRating - star;
+                  return (
+                    <span key={star}>
+                      {difference >= 0 ? (
+                        <StarIcon className="h-5 w-5 text-yellow-400" />
+                      ) : difference > -1 && difference < 0 ? (
+                        <HalfFilledStarIcon />
+                      ) : (
+                        <OutlineStarIcon className="h-5 w-5 text-gray-300 dark:text-gray-600" />
+                      )}
+                    </span>
+                  );
+                })}
               </div>
-              <p className="ml-3 text-sm">
+              <p className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 {averageRating > 0
                   ? averageRating.toFixed(1)
                   : "No ratings yet"}{" "}
@@ -326,20 +336,100 @@ export default function RecipeDetails({
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
               Description
             </h2>
-            <div
-              className="prose prose-sm sm:prose dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: recipe.description }}
-            />
+            {isContentLocked ? (
+              <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-full mb-4">
+                  {isMembershipExpired ? (
+                    <ExclamationTriangleIcon className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+                  ) : (
+                    <LockClosedIcon className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+                  )}
+                </div>
+                <h3 className="text-xl font-bold mb-2 dark:text-white">
+                  Premium Content
+                </h3>
+                {isMembershipExpired ? (
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+                    Your premium membership has expired.
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    This content is exclusive to premium members.
+                  </p>
+                )}
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  {isMembershipExpired
+                    ? "Renew your membership to regain access to premium recipes and features."
+                    : "Upgrade your account to unlock this recipe and many more premium features."}
+                </p>
+                <Button
+                  as={Link}
+                  href="/membership"
+                  color="primary"
+                  variant="solid"
+                  className="font-semibold px-6 py-2"
+                >
+                  {isMembershipExpired
+                    ? "Renew Membership"
+                    : "Upgrade to Premium"}
+                </Button>
+              </div>
+            ) : (
+              <div
+                className="prose prose-sm sm:prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: recipe.description }}
+              />
+            )}
           </div>
 
           <div className="bg-gray-50 dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
               Instructions
             </h2>
-            <div
-              className="prose prose-sm sm:prose dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: recipe.instructions }}
-            />
+            {isContentLocked ? (
+              <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-full mb-4">
+                  {isMembershipExpired ? (
+                    <ExclamationTriangleIcon className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+                  ) : (
+                    <LockClosedIcon className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+                  )}
+                </div>
+                <h3 className="text-xl font-bold mb-2 dark:text-white">
+                  Premium Content
+                </h3>
+                {isMembershipExpired ? (
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+                    Your premium membership has expired.
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    This content is exclusive to premium members.
+                  </p>
+                )}
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  {isMembershipExpired
+                    ? "Renew your membership to regain access to premium recipes and features."
+                    : "Upgrade your account to unlock this recipe and many more premium features."}
+                </p>
+                <Button
+                  as={Link}
+                  href="/membership"
+                  color="primary"
+                  variant="solid"
+                  className="font-semibold px-6 py-2"
+                >
+                  {isMembershipExpired
+                    ? "Renew Membership"
+                    : "Upgrade to Premium"}
+                </Button>
+              </div>
+            ) : (
+              <div
+                className="prose prose-sm sm:prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: recipe.instructions }}
+              />
+            )}
           </div>
         </div>
 
@@ -373,6 +463,8 @@ export default function RecipeDetails({
                   </span>
                 </div>
               </div>
+
+              {/* Star rating statistics */}
               <div className="w-full sm:w-1/2">
                 {[5, 4, 3, 2, 1].map((star) => {
                   const ratings = getRatingsArray;
@@ -389,7 +481,7 @@ export default function RecipeDetails({
                         <div
                           className="bg-yellow-400 h-2 rounded-full"
                           style={{ width: `${percentage}%` }}
-                        ></div>
+                        />
                       </div>
                       <span className="text-sm ml-2">
                         {percentage.toFixed(1)}%
@@ -401,81 +493,131 @@ export default function RecipeDetails({
             </div>
           </div>
 
-          {/* Add rating form or display user's rating */}
-          <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">
-              {userHasRated ? "Your Rating" : "Rate this Recipe"}
-            </h3>
-            <div className="space-y-4">
-              {userHasRated ? (
-                <div>
-                  <p>You've rated this recipe:</p>
-                  <div className="flex items-center mt-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <FilledStarIcon
-                        key={star}
-                        className={classNames(
-                          star <= (userRating || 0)
-                            ? "text-yellow-400"
-                            : "text-gray-300 dark:text-gray-600",
-                          "h-8 w-8"
-                        )}
-                      />
-                    ))}
-                  </div>
+          {isContentLocked ? (
+            <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+              <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-full mb-4">
+                  {isMembershipExpired ? (
+                    <ExclamationTriangleIcon className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+                  ) : (
+                    <LockClosedIcon className="w-12 h-12 text-yellow-600 dark:text-yellow-400" />
+                  )}
                 </div>
-              ) : (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Your Rating
-                    </label>
-                    <div className="flex items-center">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => handleRatingClick(star)}
-                          className="focus:outline-none"
-                        >
-                          {star <= (userRating || 0) ? (
-                            <FilledStarIcon className="h-8 w-8 text-yellow-400" />
-                          ) : (
-                            <OutlineStarIcon className="h-8 w-8 text-gray-300 dark:text-gray-600" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleRatingSubmit}
-                    disabled={isMakeRatingLoading || userRating === null}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isMakeRatingLoading ? "Submitting..." : "Confirm Rating"}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Add Your Comment</h3>
-            <div className="space-y-4">
-              <FXForm
-                isReset={isMakeRecipeCommentSuccess}
-                onSubmit={handleCommentSubmit}
-                resolver={zodResolver(createCommentSchema)}
-              >
-                <div>
-                  <FXTextArea name="comment" label="Your Comment" />
-                </div>
-                <Button isLoading={isMakeRecipeCommentLoading} type="submit">
-                  Submit Comment
+                <h3 className="text-xl font-bold mb-2 dark:text-white">
+                  Premium Content
+                </h3>
+                {isMembershipExpired ? (
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+                    Your premium membership has expired.
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    This content is exclusive to premium members.
+                  </p>
+                )}
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  {isMembershipExpired
+                    ? "Renew your membership to regain access to premium recipes and features."
+                    : "Upgrade your account to rate and comment on this recipe."}
+                </p>
+                <Button
+                  as={Link}
+                  href="/membership"
+                  color="primary"
+                  variant="solid"
+                  className="font-semibold px-6 py-2"
+                >
+                  {isMembershipExpired
+                    ? "Renew Membership"
+                    : "Upgrade to Premium"}
                 </Button>
-              </FXForm>
+              </div>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Add rating form or display user's rating */}
+              <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">
+                  {userHasRated ? "Your Rating" : "Rate this Recipe"}
+                </h3>
+                <div className="space-y-4">
+                  {userHasRated ? (
+                    <div>
+                      <p>You have rated this recipe:</p>
+                      <div className="flex items-center mt-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <FilledStarIcon
+                            key={star}
+                            className={classNames(
+                              star <= (userRating || 0)
+                                ? "text-yellow-400"
+                                : "text-gray-300 dark:text-gray-600",
+                              "h-8 w-8"
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Your Rating
+                        </label>
+                        <div className="flex items-center">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => handleRatingClick(star)}
+                              className="focus:outline-none"
+                            >
+                              {star <= (userRating || 0) ? (
+                                <FilledStarIcon className="h-8 w-8 text-yellow-400" />
+                              ) : (
+                                <OutlineStarIcon className="h-8 w-8 text-gray-300 dark:text-gray-600" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleRatingSubmit}
+                        disabled={isMakeRatingLoading || userRating === null}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isMakeRatingLoading
+                          ? "Submitting..."
+                          : "Confirm Rating"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Add comment form */}
+              <div className="mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Add Your Comment</h3>
+                <div className="space-y-4">
+                  <FXForm
+                    isReset={isMakeRecipeCommentSuccess}
+                    onSubmit={handleCommentSubmit}
+                    resolver={zodResolver(createCommentSchema)}
+                  >
+                    <div>
+                      <FXTextArea name="comment" label="Your Comment" />
+                    </div>
+                    <Button
+                      isLoading={isMakeRecipeCommentLoading}
+                      type="submit"
+                    >
+                      Submit Comment
+                    </Button>
+                  </FXForm>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Ratings and comments list */}
           <div className="mt-12">

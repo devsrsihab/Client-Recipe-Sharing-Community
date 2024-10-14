@@ -13,7 +13,7 @@ import cloudinaryUpload from "@/src/utils/cloudinaryUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   FieldValues,
   FormProvider,
@@ -35,11 +35,8 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
 
   const userSingle = userSingleData?.data;
 
-  const {
-    mutate: handleUpdateUser,
-    isPending: userPending,
-    isSuccess: isUpdateUserSuccess,
-  } = useUpdateUserByIdMutation();
+  const { mutate: handleUpdateUser, isPending: userPending } =
+    useUpdateUserByIdMutation();
 
   // define methods
   const methods = useForm({
@@ -51,14 +48,11 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
 
   // form submit handler
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    
     let profilePictureUrl = userSingle?.profilePicture;
     if (imageFile) {
       profilePictureUrl = await cloudinaryUpload(imageFile);
     }
 
-    console.log(data);
-    
     const userData: Partial<IUser> = {
       name: {
         firstName: data.firstName,
@@ -71,12 +65,11 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
       profilePicture: profilePictureUrl || "",
     };
 
-    console.log("Submitting userData:", userData); // Add this log
     handleUpdateUser({ id: updateUser, data: userData });
   };
 
   // handle image change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0];
     setImageFile(file);
 
@@ -105,7 +98,7 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
   if (isSingleUserLoading) {
     return (
       <div className="flex justify-center items-center h-screen dark:bg-gray-800">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-gray-100" />
       </div>
     );
   }
@@ -132,8 +125,8 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
 
   // user is premium
   const isPremiumOptions = [
-    {key: "true", label: "Yes"},
-    {key: "false", label: "No"},
+    { key: "true", label: "Yes" },
+    { key: "false", label: "No" },
   ];
 
   return (
@@ -178,7 +171,7 @@ const UserUpdate = ({ params }: { params: { updateUser: string } }) => {
               />
             </div>
             <div className="min-w-fit flex-1">
-               <FXSelect
+              <FXSelect
                 options={isPremiumOptions}
                 name="isPremium"
                 label="Is Premium"

@@ -4,6 +4,7 @@ import { IComment } from "@/src/types";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import FXCommentStatusChange from "../FXCommentStatusChange";
 import CommentDeleteModal from "@/src/components/modal/CommentDeleteModal";
+import React from "react";
 
 export const commentRenderCell = (comment: IComment, columnKey: React.Key) => {
   const cellValue = comment[columnKey as keyof IComment];
