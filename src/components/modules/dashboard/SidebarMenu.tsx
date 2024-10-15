@@ -89,7 +89,10 @@ const SidebarMenu = ({
         <li key={item.name}>
           <Link
             href={item.href}
-            onClick={() => toggleDropdown(item.name)}
+            onClick={() => {
+              toggleDropdown(item.name);
+              setSidebarOpen(false);
+            }}
             className={classNames(
               isActive
                 ? "bg-gray-800 text-white"
@@ -128,6 +131,7 @@ const SidebarMenu = ({
       <li key={item.name}>
         <Link
           href={item.href}
+          onClick={() => setSidebarOpen(false)}
           className={classNames(
             isActive
               ? "bg-gray-800 text-white"

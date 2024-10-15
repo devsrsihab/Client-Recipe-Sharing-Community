@@ -27,6 +27,7 @@ export const renderCell = (recipe: IRecipe, columnKey: React.Key) => {
           alt="recipe"
           width={100}
           height={70}
+          className="object-cover"
         />
       );
     case "title":
