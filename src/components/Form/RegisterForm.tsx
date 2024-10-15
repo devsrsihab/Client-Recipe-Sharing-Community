@@ -33,17 +33,17 @@ const RegisterForm = () => {
   }
   return (
     <Container>
-      <section className="bg-gray-50 dark:bg-gray-900 h-screen flex items-center">
-        <div className="flex flex-wrap w-full h-full">
+      <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center py-8">
+        <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto">
           {/* Left side: Login Form */}
-          <div className="flex-1 bg-white dark:bg-gray-800 p-8 flex flex-col justify-center">
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 md:p-8 flex flex-col justify-center overflow-y-auto max-h-[90vh] md:max-h-none">
             <a
               href="#"
-              className="flex items-center mb-6 text-2xl font-semibold text-orange-400"
+              className="flex items-center mb-4 md:mb-6 text-xl md:text-2xl font-semibold text-orange-400"
             >
               SRS RecipeX
             </a>
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-6">
+            <h1 className="text-lg md:text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-4 md:mb-6">
               Sign Up to your account
             </h1>
             <FXForm
@@ -56,18 +56,20 @@ const RegisterForm = () => {
                 password: "123456789",
               }}
             >
-              <div className="flex">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <FXInput
                   variant="underlined"
                   name="firstName"
                   label="First Name"
                   type="text"
+                  fxClassName="flex-1"
                 />
                 <FXInput
                   variant="underlined"
                   name="lastName"
                   label="Last Name"
                   type="text"
+                  fxClassName="flex-1"
                 />
               </div>
               <FXInput
@@ -75,26 +77,28 @@ const RegisterForm = () => {
                 name="email"
                 label="Email"
                 type="email"
+                fxClassName="mt-4"
               />
               <FXInput
                 variant="underlined"
                 name="password"
                 label="Password"
                 type="password"
+                fxClassName="mt-4"
               />
 
               <Button
                 disabled={isPending}
                 isLoading={isPending}
                 type="submit"
-                className="my-6"
+                className="my-6 w-full"
                 radius="none"
               >
                 Sign Up
               </Button>
 
-              <p className="text-sm font-light  text-gray-500 dark:text-gray-400">
-                have an account already?{" "}
+              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                Have an account already?{" "}
                 <Link
                   href="/auth/login"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
@@ -106,7 +110,7 @@ const RegisterForm = () => {
           </div>
           {/* Right side: Image */}
           <div
-            className="hidden sm:block flex-1 bg-cover bg-center"
+            className="hidden md:block flex-1 bg-cover bg-center"
             style={{
               backgroundImage: "url('/register.webp')",
             }}

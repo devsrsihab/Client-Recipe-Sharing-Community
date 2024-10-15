@@ -19,9 +19,29 @@ import { Logo } from "@/src/components/icons";
 import NavbarDropdown from "./NavbarDropdown";
 import { useUser } from "@/src/context/user.provider";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { logOutUser } from "@/src/services/AuthService";
+import { protectedRoutes } from "@/src/constant";
+import { useReducer } from "react";
 
 export const Navbar = () => {
-  const { user, isLoading: userLoading } = useUser();
+  const {
+    user,
+    isLoading: userLoading,
+    setIsLoading: setUserLoading,
+  } = useUser();
+  const pathName = usePathname();
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useReducer((current) => !current, false);
+
+  // hanlde logout
+  const handleUserLogout = () => {
+    logOutUser();
+    setUserLoading(true);
+    if (protectedRoutes.some((route: string) => pathName.match(route))) {
+      router.push("/");
+    }
+  };
 
   // filtered navitems
   const filteredNavItems = user?.email
@@ -32,10 +52,26 @@ export const Navbar = () => {
 
   // filtered navMenuItems
   const filteredNavMenuItems = user?.email
-    ? siteConfig.navMenuItems.filter(
-        (item) => item.href !== "/auth/login" && item.href !== "/auth/register"
-      )
-    : siteConfig.navMenuItems;
+    ? siteConfig.navMenuItems.filter((item) => {
+        if (user.role === "admin") {
+          return (
+            item.href !== "/auth/register" &&
+            item.href !== "/auth/login" &&
+            item.href !== "/user/dashboard"
+          );
+        } else if (user.role === "user") {
+          return (
+            item.href !== "/auth/register" &&
+            item.href !== "/auth/login" &&
+            item.href !== "/admin/dashboard"
+          );
+        }
+        return true;
+      })
+    : siteConfig.navMenuItems.filter(
+        (item) =>
+          item.href !== "/user/dashboard" && item.href !== "/admin/dashboard"
+      );
 
   const renderNavItems = () => {
     if (userLoading) {
@@ -65,7 +101,12 @@ export const Navbar = () => {
   };
 
   return (
-    <NextUINavbar maxWidth="xl" position="sticky">
+    <NextUINavbar
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+      maxWidth="xl"
+      position="sticky"
+    >
       <NavbarContent className="basis-1/5 sm:basis-full z-20" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -100,7 +141,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       {/* Mobile */}
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+      <NavbarContent className="sm:hidden basis-1 pl-4" justify="center">
         <ThemeSwitch />
         {userLoading ? (
           <Skeleton className="w-10 h-10 rounded-lg" />
@@ -131,11 +172,17 @@ export const Navbar = () => {
                           : "foreground"
                     }
                     href={item.href}
+                    onClick={() => setIsMenuOpen()}
                   >
                     {item.label}
                   </NextLink>
                 </NavbarMenuItem>
               ))}
+          {user?.email && (
+            <NavbarMenuItem onClick={handleUserLogout}>
+              <span>Logout</span>
+            </NavbarMenuItem>
+          )}
         </div>
       </NavbarMenu>
     </NextUINavbar>

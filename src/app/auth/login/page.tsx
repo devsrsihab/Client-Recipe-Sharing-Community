@@ -74,10 +74,10 @@ const AuthLoginPage = () => {
 
   return (
     <Container>
-      <section className="bg-gray-50 dark:bg-gray-900 h-screen flex items-center">
-        <div className="flex w-full h-full">
+      <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center py-8">
+        <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto">
           {/* Left side: Login Form */}
-          <div className="w-1/2 bg-white dark:bg-gray-800 p-8 flex flex-col justify-center">
+          <div className="w-full md:w-1/2 bg-white dark:bg-gray-800 p-8 flex flex-col justify-center">
             <a
               href="#"
               className="flex items-center mb-6 text-2xl font-semibold text-orange-400"
@@ -118,10 +118,10 @@ const AuthLoginPage = () => {
                 Sign in
               </Button>
 
-              <div className="flex justify-between items-center mt-4 mb-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between items-center mt-4 mb-6">
                 <Link
                   href="/auth/forget-password"
-                  className="text-sm text-primary-600 hover:underline dark:text-primary-500"
+                  className="text-sm text-primary-600 hover:underline dark:text-primary-500 mb-2 sm:mb-0"
                 >
                   Forgot Password?
                 </Link>
@@ -136,7 +136,7 @@ const AuthLoginPage = () => {
           </div>
           {/* Right side: Image */}
           <div
-            className="w-1/2 bg-cover bg-center"
+            className="w-full md:w-1/2 h-64 md:h-auto bg-cover bg-center"
             style={{
               backgroundImage: "url('/login-image.webp')",
             }}

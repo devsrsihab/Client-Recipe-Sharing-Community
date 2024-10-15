@@ -5,6 +5,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 interface IProps extends IInput {
   isDisabled?: boolean;
+  fxClassName?: string;
 }
 
 const FXInput = ({
@@ -16,6 +17,7 @@ const FXInput = ({
   label,
   defaultValue,
   isDisabled = false,
+  fxClassName,
 }: IProps) => {
   const {
     register,
@@ -25,6 +27,7 @@ const FXInput = ({
   const currentValue = useWatch({ name, defaultValue });
   return (
     <Input
+      className={fxClassName}
       {...register(name)}
       errorMessage={errors[name] ? (errors[name]?.message as string) : ""}
       isInvalid={!!errors[name]}

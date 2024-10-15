@@ -57,5 +57,13 @@ export const siteConfig = {
       label: "Register",
       href: "/auth/register",
     },
+    {
+      label: "Dashboard",
+      href: `/user/dashboard`,
+    },
+    {
+      label: "Dashboard",
+      href: `/admin/dashboard`,
+    },
   ],
 };
