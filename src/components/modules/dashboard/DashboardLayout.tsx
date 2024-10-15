@@ -82,7 +82,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                   <MenuButton className="-m-1.5 flex gap-5 items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
 
-                    <span className="hidden lg:flex lg:items-center">
+                    <span className="flex lg:items-center">
                       <span
                         aria-hidden="true"
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white"
